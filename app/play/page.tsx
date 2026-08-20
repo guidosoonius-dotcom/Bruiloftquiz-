@@ -139,6 +139,24 @@ export default function PlayPage() {
           </div>
         )}
 
+        {state.phase === "video_intro" && question?.videoUrl && (
+          <div className="space-y-4 text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-ink-soft">
+              Vraag {questionIndex + 1} van {questions.length}
+            </p>
+            <video
+              src={question.videoUrl}
+              controls
+              autoPlay
+              playsInline
+              className="w-full rounded-2xl bg-black/5 shadow-sm"
+            />
+            <p className="text-sm text-ink-soft">
+              Kijk mee — de vraag komt zo!
+            </p>
+          </div>
+        )}
+
         {state.phase === "question" && question && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">

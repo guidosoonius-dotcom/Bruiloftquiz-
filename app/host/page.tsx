@@ -12,6 +12,7 @@ const HOST_SESSION_KEY = "bruiloftquiz.hostAuthed";
 
 const PHASE_LABEL: Record<QuizPhase, string> = {
   lobby: "Wachtkamer",
+  video_intro: "Video wordt getoond",
   question: "Vraag live",
   reveal: "Antwoord onthuld",
   leaderboard: "Tussenstand getoond",
@@ -100,16 +101,23 @@ function HostPanel() {
   }
 
   const startQuiz = () =>
-    updateState({ phase: "question", current_question_index: 0, question_started_at: new Date().toISOString() });
+    questions[0]?.videoIntro
+      ? updateState({ phase: "video_intro", current_question_index: 0, question_started_at: null })
+      : updateState({ phase: "question", current_question_index: 0, question_started_at: new Date().toISOString() });
+
+  const startQuestion = () =>
+    updateState({ phase: "question", question_started_at: new Date().toISOString() });
 
   const revealAnswer = () => updateState({ phase: "reveal" });
 
   const nextQuestion = () =>
-    updateState({
-      phase: "question",
-      current_question_index: index + 1,
-      question_started_at: new Date().toISOString(),
-    });
+    questions[index + 1]?.videoIntro
+      ? updateState({ phase: "video_intro", current_question_index: index + 1, question_started_at: null })
+      : updateState({
+          phase: "question",
+          current_question_index: index + 1,
+          question_started_at: new Date().toISOString(),
+        });
 
   const showLeaderboard = () => updateState({ phase: "leaderboard" });
 
@@ -163,6 +171,16 @@ function HostPanel() {
               className="w-full rounded-full bg-mint-deep px-6 py-4 text-lg font-semibold text-white shadow-sm active:scale-[0.98]"
             >
               ▶ Start de quiz
+            </button>
+          )}
+
+          {state.phase === "video_intro" && (
+            <button
+              onClick={startQuestion}
+              disabled={busy}
+              className="w-full rounded-full bg-mint-deep px-6 py-4 text-lg font-semibold text-white shadow-sm active:scale-[0.98]"
+            >
+              ▶ Start vraag
             </button>
           )}
 

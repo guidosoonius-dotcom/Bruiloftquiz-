@@ -1,4 +1,4 @@
-export type QuizPhase = "lobby" | "question" | "reveal" | "leaderboard" | "finished";
+export type QuizPhase = "lobby" | "video_intro" | "question" | "reveal" | "leaderboard" | "finished";
 
 export interface QuizState {
   id: number;
@@ -41,6 +41,8 @@ export interface Question {
   imageUrl?: string;
   /** Optioneel: pad naar een video in /public, bv. "/questions/vraag-5.mp4" */
   videoUrl?: string;
+  /** Als true: toon de video eerst apart (quizmaster bedient), pas daarna de vraag zelf */
+  videoIntro?: boolean;
   /** Hoeveel seconden gasten hebben om te antwoorden */
   timeLimitSeconds: number;
 }

@@ -23,7 +23,10 @@ export function QuestionCard({
           {question.anecdote}
         </p>
       )}
-      <MediaBlock imageUrl={question.imageUrl} videoUrl={question.videoUrl} />
+      <MediaBlock
+        imageUrl={question.imageUrl}
+        videoUrl={question.videoIntro ? undefined : question.videoUrl}
+      />
     </div>
   );
 }

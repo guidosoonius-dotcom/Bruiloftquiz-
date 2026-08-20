@@ -6,11 +6,15 @@ live via Supabase.
 
 ## Vragen toevoegen
 
-De echte vragen staan nog niet in de app — vul ze in in **`lib/questions.ts`**.
-Elke vraag heeft een tekst, 4 opties, het juiste antwoord, een tijdslimiet, en
-optioneel een anekdote, foto (`imageUrl`, bestand in `public/questions/`) of
-video (`videoUrl`, idem). Het bestand bevat nu 12 placeholder-vragen als
-voorbeeld — pas ze aan of voeg er meer toe.
+De vragen staan in **`lib/questions.ts`** (16 stuks). Elke vraag heeft een
+tekst, 4 opties, het juiste antwoord, een tijdslimiet, en optioneel een
+anekdote, foto (`imageUrl`, bestand in `public/questions/`) of video
+(`videoUrl`, idem).
+
+Zet `videoIntro: true` naast `videoUrl` als de video eerst apart getoond moet
+worden, vóórdat de vraag zelf verschijnt (zoals bij vraag 14): de quizmaster
+speelt de video af op alle telefoons, en drukt daarna op "▶ Start vraag" om
+pas dan de opties en de timer te tonen.
 
 ## Lokaal draaien
 
