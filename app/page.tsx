@@ -49,7 +49,7 @@ export default function JoinPage() {
       <div className="w-full max-w-sm space-y-8 text-center">
         <div className="mx-auto h-40 w-40 overflow-hidden rounded-full shadow-lg ring-4 ring-white">
           <Image
-            src="/couple/couple-2.jpg"
+            src="/couple/couple-welcome.jpg"
             alt="Het bruidspaar"
             width={320}
             height={320}
