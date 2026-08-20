@@ -67,7 +67,7 @@ export default function JoinPage() {
         <div className="animate-fade-up mx-auto w-full max-w-sm space-y-7 text-center">
           <div className="space-y-2 [text-shadow:0_1px_16px_rgba(251,246,241,0.9)]">
             <p className="font-display text-sm italic text-ink-soft">Welkom bij</p>
-            <h1 className="font-display text-4xl italic text-ink">De Bruiloftquiz</h1>
+            <h1 className="font-signature text-6xl leading-tight text-ink">De Bruiloftquiz</h1>
             <p className="text-sm text-ink-soft">
               Doe mee vanaf je telefoon — de quizmaster start zo!
             </p>

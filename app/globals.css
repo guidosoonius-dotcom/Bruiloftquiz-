@@ -28,6 +28,7 @@
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --font-display: var(--font-display);
+  --font-signature: var(--font-signature);
   --font-sans: var(--font-sans);
 }
 
@@ -42,6 +43,10 @@ h2,
 h3,
 .font-display {
   font-family: var(--font-display), Georgia, serif;
+}
+
+.font-signature {
+  font-family: var(--font-signature), cursive;
 }
 
 @keyframes hero-kenburns {

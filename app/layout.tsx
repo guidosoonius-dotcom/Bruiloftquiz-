@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Quicksand } from "next/font/google";
+import { Alex_Brush, Fraunces, Quicksand } from "next/font/google";
 import "./globals.css";
 
 const display = Fraunces({
@@ -7,6 +7,12 @@ const display = Fraunces({
   subsets: ["latin"],
   weight: ["500", "600"],
   style: ["italic", "normal"],
+});
+
+const signature = Alex_Brush({
+  variable: "--font-signature",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 const sans = Quicksand({
@@ -29,7 +35,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl" className={`${display.variable} ${sans.variable} h-full antialiased`}>
+    <html
+      lang="nl"
+      className={`${display.variable} ${signature.variable} ${sans.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
     </html>
   );
