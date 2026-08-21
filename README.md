@@ -26,17 +26,25 @@ npm run dev
 Open:
 - `http://localhost:3000` — het join-scherm voor gasten
 - `http://localhost:3000/host` — het quizmaster-paneel (PIN, zie `.env.local`)
+- `http://localhost:3000/screen` — het beamerscherm voor in de zaal
 
 ## Hoe het werkt
 
-- **Gasten** (`/`, `/play`) vullen hun naam in en zien live mee: wachtkamer →
-  vraag → antwoord onthullen → (tussentijds) scoreboard → eindstand.
+- **Gasten** (`/`, `/play`) vullen hun naam in, geven hun antwoord op hun
+  eigen telefoon en zien live mee: wachtkamer → vraag → antwoord onthullen →
+  (tussentijds) scoreboard → eindstand.
 - **Quizmaster** (`/host`, achter een PIN) bedient alles handmatig: quiz
   starten, antwoord onthullen, volgende vraag, tussenstand tonen, eindstand
   tonen.
+- **Beamerscherm** (`/screen`, geen PIN nodig — puur weergave) volgt dezelfde
+  quiz automatisch mee, maar dan groot: meer ruimte voor de vraagtekst,
+  foto's en video's, plus een live teller van hoeveel mensen al geantwoord
+  hebben en (bij onthullen) hoeveel stemmen elk antwoord kreeg. Open deze op
+  het apparaat dat op de beamer is aangesloten — gasten blijven gewoon op
+  hun eigen telefoon antwoorden.
 - Alle synchronisatie loopt via **Supabase Realtime** — zodra de quizmaster
-  op een knop drukt, wisselen alle telefoons (getest tot ~75 gelijktijdig)
-  automatisch mee van scherm.
+  op een knop drukt, wisselen alle telefoons én het beamerscherm (getest tot
+  ~75 gelijktijdige telefoons) automatisch mee van scherm.
 - Score = snelheid + juist antwoord (zie `lib/scoring.ts`).
 
 ## Configuratie
