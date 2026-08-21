@@ -128,7 +128,7 @@ export default function PlayPage() {
       <FloralAccents />
       <div className="mx-auto w-full max-w-md flex-1">
         {state.phase === "lobby" && (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-24 text-center">
+          <div className="animate-rise-in flex flex-1 flex-col items-center justify-center gap-3 py-24 text-center">
             <p className="font-display text-2xl italic text-ink">
               Welkom, {player.name}!
             </p>
@@ -140,7 +140,7 @@ export default function PlayPage() {
         )}
 
         {state.phase === "video_intro" && question?.videoUrl && (
-          <div className="space-y-4 text-center">
+          <div key={`video-${questionIndex}`} className="animate-rise-in space-y-4 text-center">
             <p className="text-sm font-semibold uppercase tracking-wide text-ink-soft">
               Vraag {questionIndex + 1} van {questions.length}
             </p>
@@ -158,7 +158,7 @@ export default function PlayPage() {
         )}
 
         {state.phase === "question" && question && (
-          <div className="space-y-6">
+          <div key={`question-${questionIndex}`} className="animate-rise-in space-y-6">
             <div className="flex items-center justify-between">
               <TimerRing secondsLeft={secondsLeft} totalSeconds={question.timeLimitSeconds} />
               {myAnswer && (
@@ -183,7 +183,7 @@ export default function PlayPage() {
         )}
 
         {state.phase === "reveal" && question && (
-          <div className="space-y-6">
+          <div key={`reveal-${questionIndex}`} className="animate-rise-in space-y-6">
             <QuestionCard
               question={question}
               questionNumber={questionIndex + 1}
@@ -196,7 +196,10 @@ export default function PlayPage() {
               disabled
               onSelect={() => {}}
             />
-            <div className="rounded-2xl bg-white/70 p-4 text-center shadow-sm">
+            <div
+              className="animate-rise-in rounded-2xl bg-white/70 p-4 text-center shadow-sm"
+              style={{ animationDelay: "300ms" }}
+            >
               {myAnswer ? (
                 <p className="font-semibold text-ink">
                   {myAnswer.is_correct ? "Goed! 🎉" : "Helaas, fout antwoord"}{" "}
@@ -210,7 +213,7 @@ export default function PlayPage() {
         )}
 
         {state.phase === "leaderboard" && (
-          <div className="space-y-6">
+          <div key={`leaderboard-${questionIndex}`} className="animate-rise-in space-y-6">
             <h2 className="text-center font-display text-3xl italic text-ink">Tussenstand</h2>
             <ScoreboardList leaderboard={leaderboard} ownPlayerId={player.id} />
             {ownRank >= 0 && (
@@ -222,7 +225,7 @@ export default function PlayPage() {
         )}
 
         {state.phase === "finished" && (
-          <div className="space-y-6 text-center">
+          <div className="animate-rise-in space-y-6 text-center">
             <div className="mx-auto h-28 w-28 overflow-hidden rounded-full shadow-lg ring-4 ring-white">
               <Image
                 src="/couple/couple-3.jpg"

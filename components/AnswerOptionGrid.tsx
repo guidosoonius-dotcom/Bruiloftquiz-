@@ -31,14 +31,22 @@ export function AnswerOptionGrid({
         const isCorrect = revealing && index === correctIndex;
         const isWrongSelected = revealing && isSelected && index !== correctIndex;
 
+        const entranceAnimation = isCorrect
+          ? "animate-pop-in-correct"
+          : isWrongSelected
+            ? "animate-shake-soft"
+            : "animate-pop-in";
+
         return (
           <button
             key={index}
             type="button"
             disabled={disabled}
             onClick={() => onSelect(index)}
+            style={{ animationDelay: `${index * 60}ms` }}
             className={[
               "flex items-center gap-3 rounded-2xl px-4 py-4 text-left font-semibold text-ink shadow-sm transition-all",
+              entranceAnimation,
               isSelected ? style.bgSelected : style.bg,
               disabled ? "opacity-90" : "active:scale-[0.98]",
               isCorrect ? "ring-4 ring-mint-deep" : "",

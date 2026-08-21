@@ -32,13 +32,18 @@ export function ScoreboardList({
             if (!entry) return <div key={i} className="w-24" />;
             const style = PODIUM_STYLES[i];
             return (
-              <div key={entry.playerId} className="flex w-24 flex-col items-center gap-1">
+              <div
+                key={entry.playerId}
+                className="animate-rise-in flex w-24 flex-col items-center gap-1"
+                style={{ animationDelay: `${(2 - i) * 150}ms` }}
+              >
                 <span className="text-2xl">{style.medal}</span>
                 <p className="max-w-24 truncate text-center text-sm font-semibold text-ink">
                   {entry.name}
                 </p>
                 <div
-                  className={`flex w-full ${style.height} items-start justify-center rounded-t-2xl ${style.bg} pt-2 shadow-sm`}
+                  className={`animate-grow-up flex w-full ${style.height} items-start justify-center rounded-t-2xl ${style.bg} pt-2 shadow-sm`}
+                  style={{ animationDelay: `${(2 - i) * 150 + 120}ms` }}
                 >
                   <span className="text-sm font-bold text-ink">{entry.score}</span>
                 </div>
@@ -53,7 +58,8 @@ export function ScoreboardList({
           {rest.map((entry, i) => (
             <li
               key={entry.playerId}
-              className={`flex items-center justify-between rounded-xl px-4 py-2 shadow-sm ${
+              style={{ animationDelay: `${450 + i * 40}ms` }}
+              className={`animate-rise-in flex items-center justify-between rounded-xl px-4 py-2 shadow-sm ${
                 entry.playerId === ownPlayerId ? "bg-lavender-deep/30" : "bg-white/70"
               }`}
             >

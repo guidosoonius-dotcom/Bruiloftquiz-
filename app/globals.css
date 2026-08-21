@@ -77,9 +77,105 @@ h3,
   animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pop-in-correct {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0) scale(1.045);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake-soft {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
+  45% {
+    transform: translateX(-4px);
+  }
+  65% {
+    transform: translateX(4px);
+  }
+  85% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes grow-up {
+  from {
+    opacity: 0;
+    transform: scaleY(0.6) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+.animate-rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pop-in {
+  animation: pop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pop-in-correct {
+  animation: pop-in-correct 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-shake-soft {
+  animation: shake-soft 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-grow-up {
+  transform-origin: bottom;
+  animation: grow-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-kenburns,
-  .animate-fade-up {
+  .animate-fade-up,
+  .animate-rise-in,
+  .animate-pop-in,
+  .animate-pop-in-correct,
+  .animate-shake-soft,
+  .animate-grow-up {
     animation: none;
   }
 }
