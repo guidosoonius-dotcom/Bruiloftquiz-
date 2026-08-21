@@ -76,6 +76,7 @@ function HostPanel() {
   const { state } = useQuizState();
   const { playerCount, answers } = useLeaderboard();
   const [busy, setBusy] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
 
   if (!state) {
     return (
@@ -96,7 +97,9 @@ function HostPanel() {
     question_started_at: string | null;
   }>) {
     setBusy(true);
-    await supabase.from("quiz_state").update(patch).eq("id", 1);
+    setUpdateError(null);
+    const { error } = await supabase.from("quiz_state").update(patch).eq("id", 1);
+    if (error) setUpdateError(error.message);
     setBusy(false);
   }
 
@@ -138,6 +141,12 @@ function HostPanel() {
             {PHASE_LABEL[state.phase]} · {playerCount} deelnemers
           </p>
         </div>
+
+        {updateError && (
+          <p className="rounded-2xl bg-blush/70 p-3 text-center text-sm text-blush-deep">
+            Actie is niet gelukt: {updateError}
+          </p>
+        )}
 
         {question && (
           <div className="space-y-2 rounded-2xl bg-white/70 p-4 shadow-sm">
