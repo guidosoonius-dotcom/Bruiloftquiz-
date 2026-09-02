@@ -6,15 +6,20 @@ live via Supabase.
 
 ## Vragen toevoegen
 
-De vragen staan in **`lib/questions.ts`** (16 stuks). Elke vraag heeft een
+De vragen staan in **`lib/questions.ts`** (14 stuks). Elke vraag heeft een
 tekst, 4 opties, het juiste antwoord, een tijdslimiet, en optioneel een
 anekdote, foto (`imageUrl`, bestand in `public/questions/`) of video
 (`videoUrl`, idem).
 
 Zet `videoIntro: true` naast `videoUrl` als de video eerst apart getoond moet
-worden, vóórdat de vraag zelf verschijnt (zoals bij vraag 14): de quizmaster
-speelt de video af op alle telefoons, en drukt daarna op "▶ Start vraag" om
-pas dan de opties en de timer te tonen.
+worden, vóórdat de vraag zelf verschijnt (zoals bij de voetbalvraag): de
+quizmaster speelt de video af op alle telefoons, en drukt daarna op "▶ Start
+vraag" om pas dan de opties en de timer te tonen.
+
+Let op: het veld `id` van elke vraag is de sleutel waarmee antwoorden in
+Supabase worden opgeslagen (`question_index`). Vragen toevoegen/verwijderen
+verschuift de `id`'s erna — reset daarna de testdata (zie "Quiz resetten"),
+anders horen oude antwoorden bij de verkeerde vraag.
 
 ## Lokaal draaien
 

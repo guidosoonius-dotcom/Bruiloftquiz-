@@ -44,29 +44,13 @@ export const questions: Question[] = [
   {
     id: 4,
     type: "multiple_choice",
-    question: "Op welk automerk is Cas stapelverliefd?",
-    options: ["Mini", "Fiat", "Volkswagen", "Alfa Romeo"],
-    correctIndex: 1,
-    timeLimitSeconds: 20,
-  },
-  {
-    id: 5,
-    type: "multiple_choice",
-    question: "Wat is het onbetwiste lievelingseten van Cas?",
-    options: ["Sushi", "Pizza", "Patat", "Pasta"],
-    correctIndex: 2,
-    timeLimitSeconds: 20,
-  },
-  {
-    id: 6,
-    type: "multiple_choice",
     question: "In welke plaats woonden Cas en Erik voor het eerst samen?",
     options: ["Gouda", "Ouderkerk", "Waddinxveen", "Amstelveen"],
     correctIndex: 1,
     timeLimitSeconds: 20,
   },
   {
-    id: 7,
+    id: 5,
     type: "multiple_choice",
     question: "Hoe/waar vroeg Erik Cas ten huwelijk?",
     options: [
@@ -79,7 +63,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 8,
+    id: 6,
     type: "multiple_choice",
     question: "Waarmee bouwde Erik als kind het allerliefst?",
     options: [
@@ -92,7 +76,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 9,
+    id: 7,
     type: "multiple_choice",
     question: "Wat verzamelde Erik vroeger fanatiek?",
     options: ["Voetbalplaatjes", "Pokémonkaarten", "Stripboeken", "Postzegels"],
@@ -100,7 +84,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 10,
+    id: 8,
     type: "multiple_choice",
     question: "Wat was het favoriete vak van Erik op school?",
     options: ["Wiskunde", "Geschiedenis", "Aardrijkskunde", "Gym"],
@@ -108,7 +92,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 11,
+    id: 9,
     type: "multiple_choice",
     question:
       "Cas en Erik waren allebei op dezelfde plek voordat ze elkaar kenden. Waar?",
@@ -122,7 +106,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 12,
+    id: 10,
     type: "multiple_choice",
     question: "Wat vergat Erik meermaals als hij op vakantie ging?",
     options: ["Zijn paspoort", "Zijn zonnebril", "Zijn schoenen", "Zijn portemonnee"],
@@ -130,7 +114,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 13,
+    id: 11,
     type: "multiple_choice",
     question: "Waar (bij welke club) scoorde Erik zijn 2 belangrijkste doelpunten?",
     options: [
@@ -145,7 +129,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 14,
+    id: 12,
     type: "multiple_choice",
     question: "Wat bestellen Cas en Erik het liefst als ze eten laten bezorgen?",
     options: ["Pizza", "Chinees", "Sushi", "Poke bowls"],
@@ -153,7 +137,7 @@ export const questions: Question[] = [
     timeLimitSeconds: 20,
   },
   {
-    id: 15,
+    id: 13,
     type: "multiple_choice",
     question: "Over hoeveel trajecten is Erik verkeersleider bij ProRail?",
     options: ["Vier", "Acht", "Twee", "Zes"],
