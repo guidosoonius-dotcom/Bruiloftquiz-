@@ -54,10 +54,10 @@ export const questions: Question[] = [
     type: "multiple_choice",
     question: "Hoe/waar vroeg Erik Cas ten huwelijk?",
     options: [
-      "Op het strand in Portugal",
-      "In een bootje in Griekenland",
-      "Bovenop een berg in Oostenrijk",
-      "Tijdens een stadswandeling in Parijs",
+      "In een bootje bij Kreta",
+      "In een bootje bij Corfu",
+      "In een bootje bij Santorini",
+      "In een bootje bij Rhodos",
     ],
     correctIndex: 1,
     timeLimitSeconds: 20,
@@ -96,8 +96,13 @@ export const questions: Question[] = [
     type: "multiple_choice",
     question:
       "Cas en Erik waren allebei op dezelfde plek voordat ze elkaar kenden. Waar?",
-    options: ["Kreta", "Corfu", "Santorini", "Rhodos"],
-    correctIndex: 1,
+    options: [
+      "Op een festival in Nederland",
+      "Op vakantie in Sri Lanka",
+      "Op een camping in Spanje, Platja d'Aro",
+      "Op een cruise in de Middellandse Zee",
+    ],
+    correctIndex: 2,
     timeLimitSeconds: 20,
   },
   {
