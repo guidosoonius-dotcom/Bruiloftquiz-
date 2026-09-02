@@ -46,11 +46,13 @@ export function QuestionCard({
           {question.anecdote}
         </p>
       )}
-      <MediaBlock
-        imageUrl={question.imageUrl}
-        videoUrl={question.videoIntro ? undefined : question.videoUrl}
-        size={size}
-      />
+      {question.type === "multiple_choice" && (
+        <MediaBlock
+          imageUrl={question.imageUrl}
+          videoUrl={question.videoIntro ? undefined : question.videoUrl}
+          size={size}
+        />
+      )}
     </div>
   );
 }

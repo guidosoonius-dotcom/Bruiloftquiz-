@@ -6,20 +6,37 @@ live via Supabase.
 
 ## Vragen toevoegen
 
-De vragen staan in **`lib/questions.ts`** (15 stuks). Elke vraag heeft een
-tekst, 4 opties, het juiste antwoord, een tijdslimiet, en optioneel een
-anekdote, foto (`imageUrl`, bestand in `public/questions/`) of video
-(`videoUrl`, idem).
+De vragen staan in **`lib/questions.ts`** (16 stuks). Er zijn twee vraagtypes:
 
-Zet `videoIntro: true` naast `videoUrl` als de video eerst apart getoond moet
-worden, vóórdat de vraag zelf verschijnt (zoals bij de voetbalvraag): de
-quizmaster speelt de video af op alle telefoons, en drukt daarna op "▶ Start
-vraag" om pas dan de opties en de timer te tonen.
+- `type: "multiple_choice"` — tekst, 4 opties, het juiste antwoord, een
+  tijdslimiet, en optioneel een anekdote, foto (`imageUrl`, bestand in
+  `public/questions/`) of video (`videoUrl`, idem).
+- `type: "photo_pick"` — een grid van `tiles` (elk optioneel een `imageUrl`;
+  zonder foto tonen we een placeholder-tegel) waarvan de speler er precies 2
+  moet aantikken; `correctIndexes` wijst de 2 juiste tegels aan.
+
+Zet `videoIntro: true` naast `videoUrl` (alleen bij `multiple_choice`) als de
+video eerst apart getoond moet worden, vóórdat de vraag zelf verschijnt
+(zoals bij de voetbalvraag): de quizmaster speelt de video af op alle
+telefoons, en drukt daarna op "▶ Start vraag" om pas dan de opties en de
+timer te tonen.
 
 Let op: het veld `id` van elke vraag is de sleutel waarmee antwoorden in
-Supabase worden opgeslagen (`question_index`). Vragen toevoegen/verwijderen
-verschuift de `id`'s erna — reset daarna de testdata (zie "Quiz resetten"),
-anders horen oude antwoorden bij de verkeerde vraag.
+Supabase worden opgeslagen (`question_index`). Zolang je bestaande vragen
+niet hernummert kun je gerust nieuwe toevoegen — de volgorde/uitsluiting
+regel je toch al los via het quizmaster-paneel (zie hieronder). Verander je
+wél een bestaand `id`, reset dan de testdata (zie "Quiz resetten"), anders
+horen oude antwoorden bij de verkeerde vraag.
+
+### Volgorde aanpassen of vragen uitsluiten
+
+Op `/host` staat, zolang de quiz nog in de wachtkamer staat, een sectie
+"Vragen beheren": met ▲/▼ verschuif je een vraag, met de Aan/Uit-knop sluit
+je 'm uit voor deze speelronde (zonder 'm uit de code te hoeven halen). Dit
+schrijft naar de `quiz_config`-tabel in Supabase en geldt meteen voor
+gasten en het beamerscherm. Er moet altijd minstens 1 vraag actief blijven.
+Wijzig de volgorde niet meer zodra de quiz gestart is — bestaande antwoorden
+blijven gekoppeld aan de positie waarop ze gegeven zijn.
 
 ## Lokaal draaien
 
@@ -39,8 +56,8 @@ Open:
   eigen telefoon en zien live mee: wachtkamer → vraag → antwoord onthullen →
   (tussentijds) scoreboard → eindstand.
 - **Quizmaster** (`/host`, achter een PIN) bedient alles handmatig: quiz
-  starten, antwoord onthullen, volgende vraag, tussenstand tonen, eindstand
-  tonen.
+  starten, antwoord onthullen, volgende (of vorige) vraag, tussenstand
+  tonen, eindstand tonen.
 - **Beamerscherm** (`/screen`, geen PIN nodig — puur weergave) volgt dezelfde
   quiz automatisch mee, maar dan groot: meer ruimte voor de vraagtekst,
   foto's en video's, plus een live teller van hoeveel mensen al geantwoord

@@ -6,17 +6,20 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getStoredPlayer } from "@/lib/player";
 import { useQuizState } from "@/hooks/useQuizState";
+import { useQuizConfig } from "@/hooks/useQuizConfig";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
-import { questions } from "@/lib/questions";
+import { getActiveQuestions } from "@/lib/questions";
 import { computePoints } from "@/lib/scoring";
 import { QuestionCard } from "@/components/QuestionCard";
 import { AnswerOptionGrid } from "@/components/AnswerOptionGrid";
+import { PhotoPickGrid } from "@/components/PhotoPickGrid";
 import { TimerRing } from "@/components/TimerRing";
 import { ScoreboardList } from "@/components/ScoreboardList";
 import { FloralAccents } from "@/components/FloralAccents";
 
 interface MyAnswer {
-  selected_option: number;
+  selected_option: number | null;
+  selected_options: number[] | null;
   is_correct: boolean;
   points_awarded: number;
 }
@@ -26,9 +29,16 @@ export default function PlayPage() {
   const [player, setPlayer] = useState<{ id: string; name: string } | null>(null);
   const [checkedPlayer, setCheckedPlayer] = useState(false);
   const { state } = useQuizState();
+  const { config } = useQuizConfig();
   const { leaderboard, playerCount } = useLeaderboard();
 
+  const activeQuestions = useMemo(
+    () => getActiveQuestions(config?.question_order, config?.disabled_ids),
+    [config]
+  );
+
   const [myAnswer, setMyAnswer] = useState<MyAnswer | null>(null);
+  const [picked, setPicked] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(0);
 
@@ -44,16 +54,17 @@ export default function PlayPage() {
   }, [router]);
 
   const questionIndex = state?.current_question_index ?? 0;
-  const question = questions[questionIndex];
+  const question = activeQuestions[questionIndex];
 
   // Load / reset my answer whenever the active question changes.
   useEffect(() => {
     if (!player) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset local answer before re-fetching for the new question
     setMyAnswer(null);
+    setPicked([]);
     supabase
       .from("answers")
-      .select("selected_option, is_correct, points_awarded")
+      .select("selected_option, selected_options, is_correct, points_awarded")
       .eq("player_id", player.id)
       .eq("question_index", questionIndex)
       .maybeSingle()
@@ -81,24 +92,29 @@ export default function PlayPage() {
     [leaderboard, player]
   );
 
-  async function handleSelect(index: number) {
+  async function submitAnswer(payload: { selected_option: number | null; selected_options: number[] | null; isCorrect: boolean }) {
     if (!player || !question || myAnswer || submitting) return;
     if (state?.phase !== "question") return;
 
     setSubmitting(true);
     const startedAt = state.question_started_at ? new Date(state.question_started_at).getTime() : Date.now();
     const elapsed = (Date.now() - startedAt) / 1000;
-    const isCorrect = index === question.correctIndex;
-    const points = computePoints(isCorrect, elapsed, question.timeLimitSeconds);
+    const points = computePoints(payload.isCorrect, elapsed, question.timeLimitSeconds);
 
-    const optimistic: MyAnswer = { selected_option: index, is_correct: isCorrect, points_awarded: points };
+    const optimistic: MyAnswer = {
+      selected_option: payload.selected_option,
+      selected_options: payload.selected_options,
+      is_correct: payload.isCorrect,
+      points_awarded: points,
+    };
     setMyAnswer(optimistic);
 
     const { error } = await supabase.from("answers").insert({
       player_id: player.id,
       question_index: questionIndex,
-      selected_option: index,
-      is_correct: isCorrect,
+      selected_option: payload.selected_option,
+      selected_options: payload.selected_options,
+      is_correct: payload.isCorrect,
       points_awarded: points,
     });
 
@@ -106,13 +122,37 @@ export default function PlayPage() {
       // Waarschijnlijk al beantwoord (unique constraint) — haal het bestaande antwoord op.
       const { data } = await supabase
         .from("answers")
-        .select("selected_option, is_correct, points_awarded")
+        .select("selected_option, selected_options, is_correct, points_awarded")
         .eq("player_id", player.id)
         .eq("question_index", questionIndex)
         .maybeSingle();
       if (data) setMyAnswer(data as MyAnswer);
     }
     setSubmitting(false);
+  }
+
+  function handleSelect(index: number) {
+    if (!question || question.type !== "multiple_choice") return;
+    submitAnswer({
+      selected_option: index,
+      selected_options: null,
+      isCorrect: index === question.correctIndex,
+    });
+  }
+
+  function handlePhotoToggle(index: number) {
+    if (!question || question.type !== "photo_pick" || myAnswer || submitting) return;
+    setPicked((prev) => {
+      if (prev.includes(index)) return prev.filter((i) => i !== index);
+      if (prev.length >= 2) return prev;
+      const next = [...prev, index];
+      if (next.length === 2) {
+        const correct = new Set(question.correctIndexes);
+        const isCorrect = next.every((i) => correct.has(i)) && correct.size === next.length;
+        submitAnswer({ selected_option: null, selected_options: next, isCorrect });
+      }
+      return next;
+    });
   }
 
   if (!checkedPlayer || !state || !player) {
@@ -139,10 +179,10 @@ export default function PlayPage() {
           </div>
         )}
 
-        {state.phase === "video_intro" && question?.videoUrl && (
+        {state.phase === "video_intro" && question?.type === "multiple_choice" && question.videoUrl && (
           <div key={`video-${questionIndex}`} className="animate-rise-in space-y-4 text-center">
             <p className="text-sm font-semibold uppercase tracking-wide text-ink-soft">
-              Vraag {questionIndex + 1} van {questions.length}
+              Vraag {questionIndex + 1} van {activeQuestions.length}
             </p>
             <video
               src={question.videoUrl}
@@ -168,14 +208,26 @@ export default function PlayPage() {
             <QuestionCard
               question={question}
               questionNumber={questionIndex + 1}
-              totalQuestions={questions.length}
+              totalQuestions={activeQuestions.length}
             />
-            <AnswerOptionGrid
-              options={question.options}
-              selectedIndex={myAnswer?.selected_option ?? null}
-              disabled={!!myAnswer || secondsLeft <= 0}
-              onSelect={handleSelect}
-            />
+            {question.type === "multiple_choice" ? (
+              <AnswerOptionGrid
+                options={question.options}
+                selectedIndex={myAnswer?.selected_option ?? null}
+                disabled={!!myAnswer || secondsLeft <= 0}
+                onSelect={handleSelect}
+              />
+            ) : (
+              <>
+                <p className="text-center text-xs text-ink-soft">Tik de 2 juiste foto&apos;s aan</p>
+                <PhotoPickGrid
+                  tiles={question.tiles}
+                  selectedIndexes={myAnswer?.selected_options ?? picked}
+                  disabled={!!myAnswer || secondsLeft <= 0}
+                  onToggle={handlePhotoToggle}
+                />
+              </>
+            )}
             {!myAnswer && secondsLeft <= 0 && (
               <p className="text-center text-sm text-blush-deep">Tijd is voorbij!</p>
             )}
@@ -187,15 +239,25 @@ export default function PlayPage() {
             <QuestionCard
               question={question}
               questionNumber={questionIndex + 1}
-              totalQuestions={questions.length}
+              totalQuestions={activeQuestions.length}
             />
-            <AnswerOptionGrid
-              options={question.options}
-              selectedIndex={myAnswer?.selected_option ?? null}
-              correctIndex={question.correctIndex}
-              disabled
-              onSelect={() => {}}
-            />
+            {question.type === "multiple_choice" ? (
+              <AnswerOptionGrid
+                options={question.options}
+                selectedIndex={myAnswer?.selected_option ?? null}
+                correctIndex={question.correctIndex}
+                disabled
+                onSelect={() => {}}
+              />
+            ) : (
+              <PhotoPickGrid
+                tiles={question.tiles}
+                selectedIndexes={myAnswer?.selected_options ?? []}
+                correctIndexes={question.correctIndexes}
+                disabled
+                onToggle={() => {}}
+              />
+            )}
             <div
               className="animate-rise-in rounded-2xl bg-white/70 p-4 text-center shadow-sm"
               style={{ animationDelay: "300ms" }}

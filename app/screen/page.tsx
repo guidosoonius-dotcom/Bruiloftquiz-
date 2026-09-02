@@ -3,10 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useQuizState } from "@/hooks/useQuizState";
+import { useQuizConfig } from "@/hooks/useQuizConfig";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
-import { questions } from "@/lib/questions";
+import { getActiveQuestions } from "@/lib/questions";
 import { QuestionCard } from "@/components/QuestionCard";
 import { AnswerOptionGrid } from "@/components/AnswerOptionGrid";
+import { PhotoPickGrid } from "@/components/PhotoPickGrid";
 import { TimerRing } from "@/components/TimerRing";
 import { ScoreboardList } from "@/components/ScoreboardList";
 import { FloralAccents } from "@/components/FloralAccents";
@@ -19,9 +21,15 @@ import { FloralAccents } from "@/components/FloralAccents";
  */
 export default function ScreenPage() {
   const { state } = useQuizState();
+  const { config } = useQuizConfig();
   const { leaderboard, playerCount, answers } = useLeaderboard();
   const [origin, setOrigin] = useState("");
   const [secondsLeft, setSecondsLeft] = useState(0);
+
+  const activeQuestions = useMemo(
+    () => getActiveQuestions(config?.question_order, config?.disabled_ids),
+    [config]
+  );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time client-only read of window.location
@@ -29,7 +37,7 @@ export default function ScreenPage() {
   }, []);
 
   const questionIndex = state?.current_question_index ?? 0;
-  const question = questions[questionIndex];
+  const question = activeQuestions[questionIndex];
 
   useEffect(() => {
     if (state?.phase !== "question" || !state.question_started_at || !question) return;
@@ -54,7 +62,9 @@ export default function ScreenPage() {
     answers
       .filter((a) => a.question_index === questionIndex)
       .forEach((a) => {
-        if (a.selected_option >= 0 && a.selected_option < 4) counts[a.selected_option]++;
+        if (a.selected_option !== null && a.selected_option >= 0 && a.selected_option < 4) {
+          counts[a.selected_option]++;
+        }
       });
     return counts;
   }, [answers, questionIndex]);
@@ -90,10 +100,10 @@ export default function ScreenPage() {
           </div>
         )}
 
-        {state.phase === "video_intro" && question?.videoUrl && (
+        {state.phase === "video_intro" && question?.type === "multiple_choice" && question.videoUrl && (
           <div key={`video-${questionIndex}`} className="animate-rise-in space-y-6 text-center">
             <p className="text-lg font-semibold uppercase tracking-wide text-ink-soft">
-              Vraag {questionIndex + 1} van {questions.length}
+              Vraag {questionIndex + 1} van {activeQuestions.length}
             </p>
             <video
               src={question.videoUrl}
@@ -116,16 +126,20 @@ export default function ScreenPage() {
             <QuestionCard
               question={question}
               questionNumber={questionIndex + 1}
-              totalQuestions={questions.length}
+              totalQuestions={activeQuestions.length}
               size="large"
             />
-            <AnswerOptionGrid
-              options={question.options}
-              selectedIndex={null}
-              disabled
-              onSelect={() => {}}
-              size="large"
-            />
+            {question.type === "multiple_choice" ? (
+              <AnswerOptionGrid
+                options={question.options}
+                selectedIndex={null}
+                disabled
+                onSelect={() => {}}
+                size="large"
+              />
+            ) : (
+              <PhotoPickGrid tiles={question.tiles} selectedIndexes={[]} disabled onToggle={() => {}} size="large" />
+            )}
           </div>
         )}
 
@@ -134,18 +148,29 @@ export default function ScreenPage() {
             <QuestionCard
               question={question}
               questionNumber={questionIndex + 1}
-              totalQuestions={questions.length}
+              totalQuestions={activeQuestions.length}
               size="large"
             />
-            <AnswerOptionGrid
-              options={question.options}
-              selectedIndex={null}
-              correctIndex={question.correctIndex}
-              disabled
-              onSelect={() => {}}
-              size="large"
-              voteCounts={voteCounts}
-            />
+            {question.type === "multiple_choice" ? (
+              <AnswerOptionGrid
+                options={question.options}
+                selectedIndex={null}
+                correctIndex={question.correctIndex}
+                disabled
+                onSelect={() => {}}
+                size="large"
+                voteCounts={voteCounts}
+              />
+            ) : (
+              <PhotoPickGrid
+                tiles={question.tiles}
+                selectedIndexes={[]}
+                correctIndexes={question.correctIndexes}
+                disabled
+                onToggle={() => {}}
+                size="large"
+              />
+            )}
           </div>
         )}
 

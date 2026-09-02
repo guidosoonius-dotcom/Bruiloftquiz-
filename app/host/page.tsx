@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useQuizState } from "@/hooks/useQuizState";
+import { useQuizConfig } from "@/hooks/useQuizConfig";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
-import { questions } from "@/lib/questions";
+import { questionsById, defaultQuestionOrder, resolveQuestionOrder, getActiveQuestions } from "@/lib/questions";
 import { FloralAccents } from "@/components/FloralAccents";
 import { QuizPhase } from "@/lib/types";
 
@@ -74,6 +75,7 @@ export default function HostPage() {
 
 function HostPanel() {
   const { state } = useQuizState();
+  const { config } = useQuizConfig();
   const { playerCount, answers } = useLeaderboard();
   const [busy, setBusy] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
@@ -86,9 +88,13 @@ function HostPanel() {
     );
   }
 
+  const order = resolveQuestionOrder(config?.question_order);
+  const disabledIds = config?.disabled_ids ?? [];
+  const activeQuestions = getActiveQuestions(config?.question_order, config?.disabled_ids);
+
   const index = state.current_question_index;
-  const question = questions[index];
-  const isLastQuestion = index + 1 >= questions.length;
+  const question = activeQuestions[index];
+  const isLastQuestion = index + 1 >= activeQuestions.length;
   const answeredCount = answers.filter((a) => a.question_index === index).length;
 
   async function updateState(patch: Partial<{
@@ -103,8 +109,16 @@ function HostPanel() {
     setBusy(false);
   }
 
+  async function updateConfig(patch: Partial<{ question_order: number[]; disabled_ids: number[] }>) {
+    setBusy(true);
+    setUpdateError(null);
+    const { error } = await supabase.from("quiz_config").update(patch).eq("id", 1);
+    if (error) setUpdateError(error.message);
+    setBusy(false);
+  }
+
   const startQuiz = () =>
-    questions[0]?.videoIntro
+    activeQuestions[0]?.type === "multiple_choice" && activeQuestions[0].videoIntro
       ? updateState({ phase: "video_intro", current_question_index: 0, question_started_at: null })
       : updateState({ phase: "question", current_question_index: 0, question_started_at: new Date().toISOString() });
 
@@ -113,14 +127,28 @@ function HostPanel() {
 
   const revealAnswer = () => updateState({ phase: "reveal" });
 
-  const nextQuestion = () =>
-    questions[index + 1]?.videoIntro
+  const nextQuestion = () => {
+    const next = activeQuestions[index + 1];
+    return next?.type === "multiple_choice" && next.videoIntro
       ? updateState({ phase: "video_intro", current_question_index: index + 1, question_started_at: null })
       : updateState({
           phase: "question",
           current_question_index: index + 1,
           question_started_at: new Date().toISOString(),
         });
+  };
+
+  const previousQuestion = () => {
+    if (index <= 0) return;
+    const prev = activeQuestions[index - 1];
+    return prev?.type === "multiple_choice" && prev.videoIntro
+      ? updateState({ phase: "video_intro", current_question_index: index - 1, question_started_at: null })
+      : updateState({
+          phase: "question",
+          current_question_index: index - 1,
+          question_started_at: new Date().toISOString(),
+        });
+  };
 
   const showLeaderboard = () => updateState({ phase: "leaderboard" });
 
@@ -130,6 +158,29 @@ function HostPanel() {
     if (!confirm("Terug naar de wachtkamer? Scores blijven bewaard.")) return;
     updateState({ phase: "lobby", current_question_index: 0, question_started_at: null });
   };
+
+  function moveQuestion(pos: number, direction: -1 | 1) {
+    const newPos = pos + direction;
+    if (newPos < 0 || newPos >= order.length) return;
+    const newOrder = [...order];
+    [newOrder[pos], newOrder[newPos]] = [newOrder[newPos], newOrder[pos]];
+    updateConfig({ question_order: newOrder });
+  }
+
+  function toggleDisabled(id: number) {
+    const isDisabled = disabledIds.includes(id);
+    if (!isDisabled) {
+      const activeCount = order.filter((qid) => !disabledIds.includes(qid)).length;
+      if (activeCount <= 1) {
+        setUpdateError("Er moet minstens 1 vraag actief blijven.");
+        return;
+      }
+    }
+    const newDisabled = isDisabled ? disabledIds.filter((qid) => qid !== id) : [...disabledIds, id];
+    updateConfig({ disabled_ids: newDisabled });
+  }
+
+  const resetOrder = () => updateConfig({ question_order: defaultQuestionOrder, disabled_ids: [] });
 
   return (
     <div className="relative flex flex-1 flex-col px-5 py-8">
@@ -151,24 +202,31 @@ function HostPanel() {
         {question && (
           <div className="space-y-2 rounded-2xl bg-white/70 p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">
-              Vraag {index + 1} van {questions.length}
+              Vraag {index + 1} van {activeQuestions.length}
               {state.phase === "question" && ` · ${answeredCount}/${playerCount} geantwoord`}
             </p>
             <p className="font-semibold text-ink">{question.question}</p>
             {question.anecdote && (
               <p className="text-sm italic text-ink-soft">{question.anecdote}</p>
             )}
-            <ul className="space-y-1 text-sm">
-              {question.options.map((option, i) => (
-                <li
-                  key={i}
-                  className={i === question.correctIndex ? "font-semibold text-mint-deep" : "text-ink-soft"}
-                >
-                  {i === question.correctIndex ? "✓ " : "· "}
-                  {option}
-                </li>
-              ))}
-            </ul>
+            {question.type === "multiple_choice" ? (
+              <ul className="space-y-1 text-sm">
+                {question.options.map((option, i) => (
+                  <li
+                    key={i}
+                    className={i === question.correctIndex ? "font-semibold text-mint-deep" : "text-ink-soft"}
+                  >
+                    {i === question.correctIndex ? "✓ " : "· "}
+                    {option}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-ink-soft">
+                {question.tiles.length} tegels · juist zijn foto{" "}
+                {question.correctIndexes.map((i) => i + 1).join(" & ")}
+              </p>
+            )}
           </div>
         )}
 
@@ -238,6 +296,16 @@ function HostPanel() {
             <p className="text-center text-sm text-ink-soft">De quiz is afgelopen. Bedankt!</p>
           )}
 
+          {index > 0 && state.phase !== "lobby" && state.phase !== "finished" && (
+            <button
+              onClick={previousQuestion}
+              disabled={busy}
+              className="w-full text-center text-xs text-ink-soft underline"
+            >
+              ⬅ Vorige vraag
+            </button>
+          )}
+
           <button
             onClick={resetQuiz}
             disabled={busy}
@@ -246,7 +314,91 @@ function HostPanel() {
             Terug naar wachtkamer
           </button>
         </div>
+
+        {state.phase === "lobby" && (
+          <QuestionManager
+            order={order}
+            disabledIds={disabledIds}
+            busy={busy}
+            onMove={moveQuestion}
+            onToggle={toggleDisabled}
+            onReset={resetOrder}
+          />
+        )}
       </div>
+    </div>
+  );
+}
+
+function QuestionManager({
+  order,
+  disabledIds,
+  busy,
+  onMove,
+  onToggle,
+  onReset,
+}: {
+  order: number[];
+  disabledIds: number[];
+  busy: boolean;
+  onMove: (pos: number, direction: -1 | 1) => void;
+  onToggle: (id: number) => void;
+  onReset: () => void;
+}) {
+  return (
+    <div className="space-y-2 rounded-2xl bg-white/70 p-4 shadow-sm">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">
+          Vragen beheren
+        </p>
+        <button onClick={onReset} disabled={busy} className="text-xs text-ink-soft underline">
+          Standaardvolgorde
+        </button>
+      </div>
+      <ul className="space-y-1.5">
+        {order.map((id, pos) => {
+          const q = questionsById[id];
+          if (!q) return null;
+          const isDisabled = disabledIds.includes(id);
+          return (
+            <li
+              key={id}
+              className={`flex items-center gap-2 rounded-xl px-2 py-1.5 ${isDisabled ? "opacity-40" : ""}`}
+            >
+              <div className="flex flex-col">
+                <button
+                  onClick={() => onMove(pos, -1)}
+                  disabled={busy || pos === 0}
+                  className="leading-none text-ink-soft disabled:opacity-30"
+                  aria-label="Omhoog"
+                >
+                  ▲
+                </button>
+                <button
+                  onClick={() => onMove(pos, 1)}
+                  disabled={busy || pos === order.length - 1}
+                  className="leading-none text-ink-soft disabled:opacity-30"
+                  aria-label="Omlaag"
+                >
+                  ▼
+                </button>
+              </div>
+              <p className={`flex-1 truncate text-sm ${isDisabled ? "line-through" : "text-ink"}`}>
+                {pos + 1}. {q.question}
+              </p>
+              <button
+                onClick={() => onToggle(id)}
+                disabled={busy}
+                className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
+                  isDisabled ? "bg-white text-ink-soft ring-1 ring-black/10" : "bg-mint-deep text-white"
+                }`}
+              >
+                {isDisabled ? "Uit" : "Aan"}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

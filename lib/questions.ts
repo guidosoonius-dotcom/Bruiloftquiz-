@@ -153,4 +153,46 @@ export const questions: Question[] = [
     imageUrl: "/questions/vraag-katten.jpg",
     timeLimitSeconds: 25,
   },
+  {
+    id: 15,
+    type: "photo_pick",
+    question: "Op welke twee foto's zijn Erik & Cas te zien?",
+    // TODO: vervang door de 6 echte foto's (bv. "/questions/paar-1.jpg") en
+    // zet correctIndexes op de juiste 2 tegel-nummers zodra ze binnen zijn.
+    tiles: [{}, {}, {}, {}, {}, {}],
+    correctIndexes: [0, 1],
+    timeLimitSeconds: 25,
+  },
 ];
+
+export const questionsById: Record<number, Question> = Object.fromEntries(
+  questions.map((q) => [q.id, q])
+);
+
+/** Standaardvolgorde: de nieuwe fototegel-vraag eerst, dan de rest in oorspronkelijke volgorde. */
+export const defaultQuestionOrder: number[] = [15, ...questions.filter((q) => q.id !== 15).map((q) => q.id)];
+
+/**
+ * Maakt een opgeslagen volgorde robuust tegen latere code-wijzigingen: vraag-
+ * id's die niet meer bestaan vallen weg, nieuwe id's die nog niet in de
+ * opgeslagen volgorde staan worden achteraan toegevoegd.
+ */
+export function resolveQuestionOrder(storedOrder: number[] | null | undefined): number[] {
+  const known = new Set(questions.map((q) => q.id));
+  const valid = (storedOrder ?? []).filter((id) => known.has(id));
+  const missing = defaultQuestionOrder.filter((id) => !valid.includes(id));
+  return [...valid, ...missing];
+}
+
+/** Past een opgeslagen volgorde/uitsluiting toe op de vragenlijst. */
+export function getActiveQuestions(
+  storedOrder: number[] | null | undefined,
+  disabledIds: number[] | null | undefined
+): Question[] {
+  const order = resolveQuestionOrder(storedOrder);
+  const disabled = new Set(disabledIds ?? []);
+  return order
+    .filter((id) => !disabled.has(id))
+    .map((id) => questionsById[id])
+    .filter((q): q is Question => Boolean(q));
+}
