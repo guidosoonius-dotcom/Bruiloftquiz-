@@ -98,7 +98,7 @@ export const questions: Question[] = [
       "Cas en Erik waren allebei op dezelfde plek voordat ze elkaar kenden. Waar?",
     options: [
       "Op een festival in Nederland",
-      "Op een skivakantie in Oostenrijk",
+      "Op vakantie in Sri Lanka",
       "Op een camping in Spanje, Platja d'Aro",
       "Op een cruise in de Middellandse Zee",
     ],
