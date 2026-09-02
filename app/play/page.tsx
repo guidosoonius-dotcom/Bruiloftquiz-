@@ -69,7 +69,11 @@ export default function PlayPage() {
       .eq("question_index", questionIndex)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) setMyAnswer(data as MyAnswer);
+        if (data) {
+          const answer = data as MyAnswer;
+          setMyAnswer(answer);
+          if (answer.selected_options) setPicked(answer.selected_options);
+        }
       });
   }, [player, questionIndex]);
 
@@ -93,8 +97,8 @@ export default function PlayPage() {
   );
 
   async function submitAnswer(payload: { selected_option: number | null; selected_options: number[] | null; isCorrect: boolean }) {
-    if (!player || !question || myAnswer || submitting) return;
-    if (state?.phase !== "question") return;
+    if (!player || !question || submitting) return;
+    if (state?.phase !== "question" || secondsLeft <= 0) return;
 
     setSubmitting(true);
     const startedAt = state.question_started_at ? new Date(state.question_started_at).getTime() : Date.now();
@@ -109,30 +113,24 @@ export default function PlayPage() {
     };
     setMyAnswer(optimistic);
 
-    const { error } = await supabase.from("answers").insert({
-      player_id: player.id,
-      question_index: questionIndex,
-      selected_option: payload.selected_option,
-      selected_options: payload.selected_options,
-      is_correct: payload.isCorrect,
-      points_awarded: points,
-    });
+    // Upsert: een speler mag zijn antwoord wijzigen zolang de tijd nog loopt.
+    await supabase.from("answers").upsert(
+      {
+        player_id: player.id,
+        question_index: questionIndex,
+        selected_option: payload.selected_option,
+        selected_options: payload.selected_options,
+        is_correct: payload.isCorrect,
+        points_awarded: points,
+      },
+      { onConflict: "player_id,question_index" }
+    );
 
-    if (error) {
-      // Waarschijnlijk al beantwoord (unique constraint) — haal het bestaande antwoord op.
-      const { data } = await supabase
-        .from("answers")
-        .select("selected_option, selected_options, is_correct, points_awarded")
-        .eq("player_id", player.id)
-        .eq("question_index", questionIndex)
-        .maybeSingle();
-      if (data) setMyAnswer(data as MyAnswer);
-    }
     setSubmitting(false);
   }
 
   function handleSelect(index: number) {
-    if (!question || question.type !== "multiple_choice") return;
+    if (!question || question.type !== "multiple_choice" || secondsLeft <= 0) return;
     submitAnswer({
       selected_option: index,
       selected_options: null,
@@ -141,14 +139,16 @@ export default function PlayPage() {
   }
 
   function handlePhotoToggle(index: number) {
-    if (!question || question.type !== "photo_pick" || myAnswer || submitting) return;
+    if (!question || question.type !== "photo_pick" || submitting || secondsLeft <= 0) return;
     setPicked((prev) => {
-      if (prev.includes(index)) return prev.filter((i) => i !== index);
-      if (prev.length >= 2) return prev;
-      const next = [...prev, index];
-      if (next.length === 2) {
+      const next = prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : prev.length >= 2
+          ? prev
+          : [...prev, index];
+      if (next.length === 2 && next !== prev) {
         const correct = new Set(question.correctIndexes);
-        const isCorrect = next.every((i) => correct.has(i)) && correct.size === next.length;
+        const isCorrect = next.every((i) => correct.has(i));
         submitAnswer({ selected_option: null, selected_options: next, isCorrect });
       }
       return next;
@@ -201,7 +201,12 @@ export default function PlayPage() {
           <div key={`question-${questionIndex}`} className="animate-rise-in space-y-6">
             <div className="flex items-center justify-between">
               <TimerRing secondsLeft={secondsLeft} totalSeconds={question.timeLimitSeconds} />
-              {myAnswer && (
+              {myAnswer && secondsLeft > 0 && (
+                <p className="text-sm font-semibold text-mint-deep">
+                  Antwoord verstuurd ✓ <span className="font-normal text-ink-soft">(kan nog wijzigen)</span>
+                </p>
+              )}
+              {myAnswer && secondsLeft <= 0 && (
                 <p className="text-sm font-semibold text-mint-deep">Antwoord verstuurd ✓</p>
               )}
             </div>
@@ -214,7 +219,7 @@ export default function PlayPage() {
               <AnswerOptionGrid
                 options={question.options}
                 selectedIndex={myAnswer?.selected_option ?? null}
-                disabled={!!myAnswer || secondsLeft <= 0}
+                disabled={secondsLeft <= 0}
                 onSelect={handleSelect}
               />
             ) : (
@@ -222,8 +227,8 @@ export default function PlayPage() {
                 <p className="text-center text-xs text-ink-soft">Tik de 2 juiste foto&apos;s aan</p>
                 <PhotoPickGrid
                   tiles={question.tiles}
-                  selectedIndexes={myAnswer?.selected_options ?? picked}
-                  disabled={!!myAnswer || secondsLeft <= 0}
+                  selectedIndexes={picked}
+                  disabled={secondsLeft <= 0}
                   onToggle={handlePhotoToggle}
                 />
               </>
