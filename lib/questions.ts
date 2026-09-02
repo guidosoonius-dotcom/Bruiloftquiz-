@@ -96,13 +96,8 @@ export const questions: Question[] = [
     type: "multiple_choice",
     question:
       "Cas en Erik waren allebei op dezelfde plek voordat ze elkaar kenden. Waar?",
-    options: [
-      "Op een festival in Nederland",
-      "Op vakantie in Sri Lanka",
-      "Op een camping in Spanje, Platja d'Aro",
-      "Op een cruise in de Middellandse Zee",
-    ],
-    correctIndex: 2,
+    options: ["Kreta", "Corfu", "Santorini", "Rhodos"],
+    correctIndex: 1,
     timeLimitSeconds: 20,
   },
   {
