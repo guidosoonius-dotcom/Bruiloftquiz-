@@ -6,7 +6,7 @@ live via Supabase.
 
 ## Vragen toevoegen
 
-De vragen staan in **`lib/questions.ts`** (14 stuks). Elke vraag heeft een
+De vragen staan in **`lib/questions.ts`** (15 stuks). Elke vraag heeft een
 tekst, 4 opties, het juiste antwoord, een tijdslimiet, en optioneel een
 anekdote, foto (`imageUrl`, bestand in `public/questions/`) of video
 (`videoUrl`, idem).

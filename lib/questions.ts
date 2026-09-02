@@ -144,4 +144,13 @@ export const questions: Question[] = [
     correctIndex: 3,
     timeLimitSeconds: 20,
   },
+  {
+    id: 14,
+    type: "multiple_choice",
+    question: "Hoe heten de katten van Erik en Cas?",
+    options: ["Milo & Suus", "Lilo & Guus", "Lilo & Truus", "Milo & Guus"],
+    correctIndex: 0,
+    imageUrl: "/questions/vraag-katten.jpg",
+    timeLimitSeconds: 25,
+  },
 ];
