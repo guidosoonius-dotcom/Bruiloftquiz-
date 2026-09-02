@@ -149,7 +149,7 @@ export const questions: Question[] = [
     type: "multiple_choice",
     question: "Hoe heten de katten van Erik en Cas?",
     options: ["Milo & Suus", "Lilo & Guus", "Lilo & Truus", "Milo & Guus"],
-    correctIndex: 0,
+    correctIndex: 1,
     imageUrl: "/questions/vraag-katten.jpg",
     timeLimitSeconds: 25,
   },
