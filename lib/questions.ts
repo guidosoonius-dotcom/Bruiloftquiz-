@@ -177,7 +177,8 @@ export const questions: Question[] = [
     question: "Wie ontmoette Cassandra voor het eerst?",
     options: ["Vrienden Erik", "Papa en mama", "Mariska", "Ronald"],
     correctIndex: 3,
-    timeLimitSeconds: 20,
+    imageUrl: "/questions/vraag-10.jpg",
+    timeLimitSeconds: 25,
   },
 ];
 
