@@ -163,6 +163,22 @@ export const questions: Question[] = [
     correctIndexes: [0, 1],
     timeLimitSeconds: 25,
   },
+  {
+    id: 16,
+    type: "multiple_choice",
+    question: "Wat was Erik zijn belangrijkste taak in het huishouden aan de Ronsseweg?",
+    options: ["Schoonmaken", "Eten koken", "Boodschappen", "Stofzuigen"],
+    correctIndex: 0,
+    timeLimitSeconds: 20,
+  },
+  {
+    id: 17,
+    type: "multiple_choice",
+    question: "Wie ontmoette Cassandra voor het eerst?",
+    options: ["Vrienden Erik", "Papa en mama", "Mariska", "Ronald"],
+    correctIndex: 3,
+    timeLimitSeconds: 20,
+  },
 ];
 
 export const questionsById: Record<number, Question> = Object.fromEntries(
