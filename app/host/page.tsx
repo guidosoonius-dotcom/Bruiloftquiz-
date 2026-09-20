@@ -7,6 +7,8 @@ import { useQuizConfig } from "@/hooks/useQuizConfig";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { questionsById, defaultQuestionOrder, resolveQuestionOrder, getActiveQuestions } from "@/lib/questions";
 import { FloralAccents } from "@/components/FloralAccents";
+import { MediaBlock } from "@/components/MediaBlock";
+import { PhotoPickGrid } from "@/components/PhotoPickGrid";
 import { QuizPhase } from "@/lib/types";
 
 const HOST_SESSION_KEY = "bruiloftquiz.hostAuthed";
@@ -210,22 +212,34 @@ function HostPanel() {
               <p className="text-sm italic text-ink-soft">{question.anecdote}</p>
             )}
             {question.type === "multiple_choice" ? (
-              <ul className="space-y-1 text-sm">
-                {question.options.map((option, i) => (
-                  <li
-                    key={i}
-                    className={i === question.correctIndex ? "font-semibold text-mint-deep" : "text-ink-soft"}
-                  >
-                    {i === question.correctIndex ? "✓ " : "· "}
-                    {option}
-                  </li>
-                ))}
-              </ul>
+              <>
+                <MediaBlock imageUrl={question.imageUrl} videoUrl={question.videoUrl} />
+                <ul className="space-y-1 text-sm">
+                  {question.options.map((option, i) => (
+                    <li
+                      key={i}
+                      className={i === question.correctIndex ? "font-semibold text-mint-deep" : "text-ink-soft"}
+                    >
+                      {i === question.correctIndex ? "✓ " : "· "}
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+              </>
             ) : (
-              <p className="text-sm text-ink-soft">
-                {question.tiles.length} tegels · juist zijn foto{" "}
-                {question.correctIndexes.map((i) => i + 1).join(" & ")}
-              </p>
+              <>
+                <p className="text-sm text-ink-soft">
+                  {question.tiles.length} tegels · juist zijn foto{" "}
+                  {question.correctIndexes.map((i) => i + 1).join(" & ")}
+                </p>
+                <PhotoPickGrid
+                  tiles={question.tiles}
+                  selectedIndexes={[]}
+                  correctIndexes={question.correctIndexes}
+                  disabled
+                  onToggle={() => {}}
+                />
+              </>
             )}
           </div>
         )}
