@@ -119,7 +119,7 @@ export const questions: Question[] = [
     question: "Waar (bij welke club) scoorde Erik zijn 2 belangrijkste doelpunten?",
     options: [
       "Bij Alphense Boys",
-      "Bij DOSR in Roelofarendsveen",
+      "Bij DOSR",
       "Bij VVSB",
       "Bij Roda '23",
     ],
