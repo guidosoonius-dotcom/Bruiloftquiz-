@@ -157,9 +157,9 @@ export const questions: Question[] = [
     id: 15,
     type: "photo_pick",
     question: "Op welke twee foto's zijn Erik & Cas te zien?",
-    // TODO: vervang door de 6 echte foto's (bv. "/questions/paar-1.jpg") en
-    // zet correctIndexes op de juiste 2 tegel-nummers zodra ze binnen zijn.
-    tiles: [{}, {}, {}, {}, {}, {}],
+    // TODO: vervang de resterende 4 placeholder-tegels door echte foto's
+    // zodra ze binnen zijn.
+    tiles: [{ imageUrl: "/questions/paar-1.jpg" }, { imageUrl: "/questions/paar-2.jpg" }, {}, {}, {}, {}],
     correctIndexes: [0, 1],
     timeLimitSeconds: 25,
   },
