@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
 import { supabase } from "@/lib/supabase";
 import { getStoredPlayer, storePlayer } from "@/lib/player";
 import { FloralAccents } from "@/components/FloralAccents";
@@ -13,10 +14,13 @@ export default function JoinPage() {
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [existing, setExisting] = useState<{ id: string; name: string } | null>(null);
+  const [origin, setOrigin] = useState("");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time client-only read of localStorage
     setExisting(getStoredPlayer());
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time client-only read of window.location
+    setOrigin(window.location.origin);
   }, []);
 
   async function handleJoin(e: React.FormEvent) {
@@ -72,6 +76,18 @@ export default function JoinPage() {
               Doe mee vanaf je telefoon — de quizmaster start zo!
             </p>
           </div>
+
+          {origin && (
+            <div
+              className="animate-fade-up flex flex-col items-center gap-2"
+              style={{ animationDelay: "100ms" }}
+            >
+              <div className="rounded-2xl bg-white/90 p-3 shadow-sm ring-1 ring-black/5">
+                <QRCodeSVG value={origin} size={140} />
+              </div>
+              <p className="text-xs text-ink-soft">Laat anderen deze code scannen om ook mee te doen</p>
+            </div>
+          )}
 
           {existing ? (
             <div
