@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { QRCodeSVG } from "qrcode.react";
 import { useQuizState } from "@/hooks/useQuizState";
 import { useQuizConfig } from "@/hooks/useQuizConfig";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
@@ -95,6 +96,11 @@ export default function ScreenPage() {
             </div>
             <h1 className="font-signature text-8xl text-ink">De Bruiloftquiz</h1>
             <p className="text-2xl text-ink-soft">Doe mee vanaf je telefoon!</p>
+            {origin && (
+              <div className="rounded-3xl bg-white p-4 shadow-lg ring-4 ring-white">
+                <QRCodeSVG value={origin} size={220} />
+              </div>
+            )}
             {origin && <p className="text-3xl font-semibold text-ink">{origin}</p>}
             <p className="text-xl text-ink-soft">{playerCount} deelnemers klaar</p>
           </div>
