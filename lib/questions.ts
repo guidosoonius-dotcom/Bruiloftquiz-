@@ -157,9 +157,14 @@ export const questions: Question[] = [
     id: 15,
     type: "photo_pick",
     question: "Op welke twee foto's zijn Erik & Cas te zien?",
-    // TODO: vervang de resterende 4 placeholder-tegels door echte foto's
-    // zodra ze binnen zijn.
-    tiles: [{ imageUrl: "/questions/paar-1.jpg" }, { imageUrl: "/questions/paar-2.jpg" }, {}, {}, {}, {}],
+    tiles: [
+      { imageUrl: "/questions/paar-1.jpg" },
+      { imageUrl: "/questions/paar-2.jpg" },
+      { imageUrl: "/questions/paar-3.jpg" },
+      { imageUrl: "/questions/paar-4.jpg" },
+      { imageUrl: "/questions/paar-5.jpg" },
+      { imageUrl: "/questions/paar-6.jpg" },
+    ],
     correctIndexes: [0, 1],
     timeLimitSeconds: 25,
   },
