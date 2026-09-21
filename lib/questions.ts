@@ -16,6 +16,7 @@ export const questions: Question[] = [
     question: "Welke bijnaam kregen Eriks benen in de sportschool?",
     options: ["Luciferstokjes", "Kebabstaven", "Boomstammen", "Rietjes"],
     correctIndex: 1,
+    imageUrl: "/questions/vraag-8.jpg",
     timeLimitSeconds: 20,
   },
   {
