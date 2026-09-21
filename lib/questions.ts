@@ -49,6 +49,7 @@ export const questions: Question[] = [
     question: "In welke plaats woonden Cas en Erik voor het eerst samen?",
     options: ["Lekkerkerk", "Ouderkerk", "Stolwijk", "Krimpen aan de IJssel"],
     correctIndex: 1,
+    imageUrl: "/questions/vraag-13.jpg",
     timeLimitSeconds: 20,
   },
   {
