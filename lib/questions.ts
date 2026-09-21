@@ -31,6 +31,7 @@ export const questions: Question[] = [
       "Ze eten het nooit op feestjes",
     ],
     correctIndex: 1,
+    videoUrl: "/questions/vraag-marly.mp4",
     timeLimitSeconds: 20,
   },
   {
