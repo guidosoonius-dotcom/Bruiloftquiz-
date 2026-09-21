@@ -40,6 +40,7 @@ export const questions: Question[] = [
       "Waar is Erik na het uitgaan wel eens slapend aangetroffen? (Hij is bekend als 'makkelijke slaper')",
     options: ["Op de bank", "In de tuin", "Op de badkamervloer", "In de auto"],
     correctIndex: 2,
+    imageUrl: "/questions/vraag-7.jpg",
     timeLimitSeconds: 20,
   },
   {
