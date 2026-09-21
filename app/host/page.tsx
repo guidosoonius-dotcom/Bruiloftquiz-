@@ -161,6 +161,15 @@ function HostPanel() {
     updateState({ phase: "lobby", current_question_index: 0, question_started_at: null });
   };
 
+  async function resetScores() {
+    if (!confirm("Alle scores wissen? Dit kan niet ongedaan gemaakt worden.")) return;
+    setBusy(true);
+    setUpdateError(null);
+    const { error } = await supabase.from("answers").delete().not("id", "is", null);
+    if (error) setUpdateError(error.message);
+    setBusy(false);
+  }
+
   function moveQuestion(pos: number, direction: -1 | 1) {
     const newPos = pos + direction;
     if (newPos < 0 || newPos >= order.length) return;
@@ -326,6 +335,14 @@ function HostPanel() {
             className="w-full text-center text-xs text-ink-soft underline"
           >
             Terug naar wachtkamer
+          </button>
+
+          <button
+            onClick={resetScores}
+            disabled={busy}
+            className="w-full text-center text-xs text-blush-deep underline"
+          >
+            Alle scores resetten
           </button>
         </div>
 

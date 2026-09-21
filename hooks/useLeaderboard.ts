@@ -40,6 +40,11 @@ export function useLeaderboard() {
         { event: "INSERT", schema: "public", table: "answers" },
         (payload) => setAnswers((prev) => [...prev, payload.new as Answer])
       )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "answers" },
+        (payload) => setAnswers((prev) => prev.filter((a) => a.id !== (payload.old as Answer).id))
+      )
       .subscribe();
 
     return () => {
