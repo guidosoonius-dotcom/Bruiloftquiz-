@@ -76,6 +76,7 @@ export const questions: Question[] = [
       "Alleen met kartonnen dozen",
     ],
     correctIndex: 1,
+    imageUrl: "/questions/vraag-4.jpg",
     timeLimitSeconds: 20,
   },
   {
