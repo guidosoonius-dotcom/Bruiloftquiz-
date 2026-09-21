@@ -175,6 +175,7 @@ export const questions: Question[] = [
     question: "Wat was Erik zijn belangrijkste taak in het huishouden aan de Ronsseweg?",
     options: ["Schoonmaken", "Eten koken", "Boodschappen", "Stofzuigen"],
     correctIndex: 0,
+    imageUrl: "/questions/vraag-9.jpg",
     timeLimitSeconds: 20,
   },
   {
