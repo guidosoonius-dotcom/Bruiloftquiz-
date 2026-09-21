@@ -115,6 +115,7 @@ export const questions: Question[] = [
     question: "Wat vergat Erik meermaals als hij op vakantie ging?",
     options: ["Zijn paspoort", "Zijn zonnebril", "Zijn schoenen", "Zijn portemonnee"],
     correctIndex: 2,
+    imageUrl: "/questions/vraag-3.jpg",
     timeLimitSeconds: 20,
   },
   {
