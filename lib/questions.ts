@@ -65,6 +65,7 @@ export const questions: Question[] = [
       "In een bootje bij Rhodos",
     ],
     correctIndex: 1,
+    imageUrl: "/questions/vraag-aanzoek.jpg",
     timeLimitSeconds: 20,
   },
   {
