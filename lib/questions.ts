@@ -26,7 +26,7 @@ export const questions: Question[] = [
     question:
       "Marly is dol op maisvingers eten. Wat hebben Marly en Cas gemeen als het op lekkers aankomt?",
     options: [
-      "Ze bakken het liever zelf",
+      "Ze gebruiken het als huidverzorging",
       "Ze graaien er allebei gulzig naar",
       "Ze delen het altijd eerlijk",
       "Ze eten het nooit op feestjes",
