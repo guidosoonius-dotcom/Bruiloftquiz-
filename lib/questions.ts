@@ -112,6 +112,7 @@ export const questions: Question[] = [
       "Op een cruise in de Middellandse Zee",
     ],
     correctIndex: 2,
+    imageUrl: "/questions/vraag-samenplek.jpg",
     timeLimitSeconds: 20,
   },
   {
