@@ -79,7 +79,7 @@ export const questions: Question[] = [
       "Alleen met kartonnen dozen",
     ],
     correctIndex: 1,
-    imageUrl: "/questions/vraag-4.jpg",
+    imageUrl: "/questions/vraag-bouwen.jpg",
     timeLimitSeconds: 20,
   },
   {
@@ -88,6 +88,7 @@ export const questions: Question[] = [
     question: "Wat verzamelde Erik vroeger fanatiek?",
     options: ["Voetbalplaatjes", "Pokémonkaarten", "Stripboeken", "Postzegels"],
     correctIndex: 1,
+    imageUrl: "/questions/vraag-4.jpg",
     timeLimitSeconds: 20,
   },
   {
