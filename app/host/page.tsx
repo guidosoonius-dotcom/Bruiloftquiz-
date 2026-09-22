@@ -222,7 +222,14 @@ function HostPanel() {
             )}
             {question.type === "multiple_choice" ? (
               <>
-                <MediaBlock imageUrl={question.imageUrl} videoUrl={question.videoUrl} />
+                <MediaBlock
+                  imageUrl={question.imageUrl}
+                  videoUrl={
+                    question.videoRevealOnly && state.phase === "question"
+                      ? undefined
+                      : question.videoUrl
+                  }
+                />
                 <ul className="space-y-1 text-sm">
                   {question.options.map((option, i) => (
                     <li
