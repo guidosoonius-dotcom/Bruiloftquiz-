@@ -8,6 +8,7 @@ export const questions: Question[] = [
       "Welk huisdier had Erik vroeger, dat hij op een gegeven moment verkocht op de rommelmarkt?",
     options: ["Cavia's", "Wandelende takken", "Een schildpad", "Goudvissen"],
     correctIndex: 1,
+    imageUrl: "/questions/vraag-huisdier.jpg",
     timeLimitSeconds: 20,
   },
   {
