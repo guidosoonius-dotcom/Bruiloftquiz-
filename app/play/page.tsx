@@ -245,6 +245,7 @@ export default function PlayPage() {
               question={question}
               questionNumber={questionIndex + 1}
               totalQuestions={activeQuestions.length}
+              revealed
             />
             {question.type === "multiple_choice" ? (
               <AnswerOptionGrid

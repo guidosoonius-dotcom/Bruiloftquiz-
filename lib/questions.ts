@@ -33,6 +33,7 @@ export const questions: Question[] = [
     ],
     correctIndex: 1,
     videoUrl: "/questions/vraag-marly.mp4",
+    videoRevealOnly: true,
     timeLimitSeconds: 20,
   },
   {

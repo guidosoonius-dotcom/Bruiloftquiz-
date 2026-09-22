@@ -6,12 +6,15 @@ export function QuestionCard({
   questionNumber,
   totalQuestions,
   size = "default",
+  revealed = false,
 }: {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
   /** "large" voor het beamerscherm: grotere tekst en meer ruimte voor media */
   size?: "default" | "large";
+  /** True zodra het antwoord onthuld is (reveal/tussenstand/eindstand) */
+  revealed?: boolean;
 }) {
   const large = size === "large";
 
@@ -49,7 +52,11 @@ export function QuestionCard({
       {question.type === "multiple_choice" && (
         <MediaBlock
           imageUrl={question.imageUrl}
-          videoUrl={question.videoIntro ? undefined : question.videoUrl}
+          videoUrl={
+            question.videoIntro || (question.videoRevealOnly && !revealed)
+              ? undefined
+              : question.videoUrl
+          }
           size={size}
         />
       )}

@@ -156,6 +156,7 @@ export default function ScreenPage() {
               questionNumber={questionIndex + 1}
               totalQuestions={activeQuestions.length}
               size="large"
+              revealed
             />
             {question.type === "multiple_choice" ? (
               <AnswerOptionGrid

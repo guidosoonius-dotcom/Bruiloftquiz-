@@ -51,6 +51,8 @@ export interface MultipleChoiceQuestion extends QuestionBase {
   videoUrl?: string;
   /** Als true: toon de video eerst apart (quizmaster bedient), pas daarna de vraag zelf */
   videoIntro?: boolean;
+  /** Als true: verberg de video tijdens het antwoorden, toon 'm pas bij het onthullen van het antwoord */
+  videoRevealOnly?: boolean;
 }
 
 export interface PhotoPickQuestion extends QuestionBase {
