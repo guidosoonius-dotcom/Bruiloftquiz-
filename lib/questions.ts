@@ -193,7 +193,7 @@ export const questions: Question[] = [
     id: 17,
     type: "multiple_choice",
     question: "Wie ontmoette Cassandra voor het eerst?",
-    options: ["Vrienden Erik", "Papa en mama", "Mariska", "Ronald"],
+    options: ["Vrienden Erik", "Paul en Annette", "Mariska", "Ronald"],
     correctIndex: 3,
     imageUrl: "/questions/vraag-10.jpg",
     timeLimitSeconds: 25,
