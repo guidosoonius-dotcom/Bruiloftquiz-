@@ -43,7 +43,11 @@ export function useLeaderboard() {
       .on(
         "postgres_changes",
         { event: "DELETE", schema: "public", table: "answers" },
-        (payload) => setAnswers((prev) => prev.filter((a) => a.id !== (payload.old as Answer).id))
+        // Herlaad alles i.p.v. lokaal filteren: bij een bulk-delete (reset)
+        // vuurt Postgres 1 event per verwijderde rij en kan een client een
+        // event missen — een volledige refetch garandeert dat de score
+        // uiteindelijk klopt, ook als niet elk los event aankwam.
+        () => load()
       )
       .subscribe();
 

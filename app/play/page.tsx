@@ -62,19 +62,44 @@ export default function PlayPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset local answer before re-fetching for the new question
     setMyAnswer(null);
     setPicked([]);
-    supabase
-      .from("answers")
-      .select("selected_option, selected_options, is_correct, points_awarded")
-      .eq("player_id", player.id)
-      .eq("question_index", questionIndex)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) {
-          const answer = data as MyAnswer;
-          setMyAnswer(answer);
-          if (answer.selected_options) setPicked(answer.selected_options);
-        }
-      });
+
+    let active = true;
+    function loadMyAnswer() {
+      supabase
+        .from("answers")
+        .select("selected_option, selected_options, is_correct, points_awarded")
+        .eq("player_id", player!.id)
+        .eq("question_index", questionIndex)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (!active) return;
+          if (data) {
+            const answer = data as MyAnswer;
+            setMyAnswer(answer);
+            if (answer.selected_options) setPicked(answer.selected_options);
+          } else {
+            setMyAnswer(null);
+            setPicked([]);
+          }
+        });
+    }
+    loadMyAnswer();
+
+    // Als de host alle scores reset verdwijnt m'n antwoord uit de database —
+    // herlaad dan opnieuw zodat "Antwoord verstuurd" niet blijft hangen.
+    const channel = supabase
+      .channel(`my_answer_${player.id}_${questionIndex}`)
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "answers" },
+        loadMyAnswer
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, [player, questionIndex]);
 
   // Countdown timer while a question is live.
