@@ -184,15 +184,8 @@ export default function PlayPage() {
             <p className="text-sm font-semibold uppercase tracking-wide text-ink-soft">
               Vraag {questionIndex + 1} van {activeQuestions.length}
             </p>
-            <video
-              src={question.videoUrl}
-              controls
-              autoPlay
-              playsInline
-              className="w-full rounded-2xl bg-black/5 shadow-sm"
-            />
-            <p className="text-sm text-ink-soft">
-              Kijk mee — de vraag komt zo!
+            <p className="text-lg text-ink-soft">
+              Kijk naar het scherm — de vraag komt zo!
             </p>
           </div>
         )}
@@ -245,7 +238,6 @@ export default function PlayPage() {
               question={question}
               questionNumber={questionIndex + 1}
               totalQuestions={activeQuestions.length}
-              revealed
             />
             {question.type === "multiple_choice" ? (
               <AnswerOptionGrid

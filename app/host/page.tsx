@@ -222,14 +222,12 @@ function HostPanel() {
             )}
             {question.type === "multiple_choice" ? (
               <>
-                <MediaBlock
-                  imageUrl={question.imageUrl}
-                  videoUrl={
-                    question.videoRevealOnly && state.phase === "question"
-                      ? undefined
-                      : question.videoUrl
-                  }
-                />
+                <MediaBlock imageUrl={question.imageUrl} />
+                {question.videoUrl && (
+                  <p className="text-xs italic text-ink-soft">
+                    🎬 Video wordt alleen getoond op het scherm (beamer)
+                  </p>
+                )}
                 <ul className="space-y-1 text-sm">
                   {question.options.map((option, i) => (
                     <li
