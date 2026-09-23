@@ -136,6 +136,7 @@ export const questions: Question[] = [
       "Bij Roda '23",
     ],
     correctIndex: 1,
+    imageUrl: "/questions/vraag-voetbal.jpg",
     videoUrl: "/questions/vraag-14.mp4",
     videoIntro: true,
     timeLimitSeconds: 20,
