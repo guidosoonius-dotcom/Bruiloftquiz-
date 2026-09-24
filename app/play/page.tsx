@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { getStoredPlayer } from "@/lib/player";
+import { getStoredPlayer, clearStoredPlayer } from "@/lib/player";
 import { useQuizState } from "@/hooks/useQuizState";
 import { useQuizConfig } from "@/hooks/useQuizConfig";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
@@ -48,9 +48,25 @@ export default function PlayPage() {
       router.replace("/");
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time client-only read of localStorage
-    setPlayer(stored);
-    setCheckedPlayer(true);
+    // Een opgeslagen speler-id kan verwijzen naar een rij die niet meer
+    // bestaat (bv. na een handmatige opschoning van de spelerslijst tussen
+    // een testronde en het echte feest). Zonder deze check blijven
+    // antwoorden dan onopgemerkt falen — de speler denkt mee te doen, maar
+    // niets wordt opgeslagen.
+    supabase
+      .from("players")
+      .select("id")
+      .eq("id", stored.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!data) {
+          clearStoredPlayer();
+          router.replace("/");
+          return;
+        }
+        setPlayer(stored);
+        setCheckedPlayer(true);
+      });
   }, [router]);
 
   const questionIndex = state?.current_question_index ?? 0;
@@ -139,7 +155,7 @@ export default function PlayPage() {
     setMyAnswer(optimistic);
 
     // Upsert: een speler mag zijn antwoord wijzigen zolang de tijd nog loopt.
-    await supabase.from("answers").upsert(
+    const { error } = await supabase.from("answers").upsert(
       {
         player_id: player.id,
         question_index: questionIndex,
@@ -150,6 +166,17 @@ export default function PlayPage() {
       },
       { onConflict: "player_id,question_index" }
     );
+
+    if (error) {
+      // De speler-id bestaat niet meer in de database (bv. handmatig
+      // opgeschoond) — het antwoord is dus niet echt opgeslagen. Zonder
+      // deze check blijft "Antwoord verstuurd" ten onrechte staan.
+      setMyAnswer(null);
+      if (error.code === "23503") {
+        clearStoredPlayer();
+        router.replace("/");
+      }
+    }
 
     setSubmitting(false);
   }
