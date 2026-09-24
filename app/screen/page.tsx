@@ -26,6 +26,9 @@ export default function ScreenPage() {
   const { leaderboard, playerCount, answers } = useLeaderboard();
   const [origin, setOrigin] = useState("");
   const [secondsLeft, setSecondsLeft] = useState(0);
+  // Browsers staan automatisch afspelen mét geluid pas toe na één klik op de
+  // pagina. Zonder die klik blijven de filmpjes op de beamer stil op pauze.
+  const [soundUnlocked, setSoundUnlocked] = useState(false);
 
   const activeQuestions = useMemo(
     () => getActiveQuestions(config?.question_order, config?.disabled_ids),
@@ -81,6 +84,14 @@ export default function ScreenPage() {
   return (
     <div className="relative flex flex-1 flex-col px-10 py-12">
       <FloralAccents />
+      {!soundUnlocked && (
+        <button
+          onClick={() => setSoundUnlocked(true)}
+          className="fixed bottom-6 right-6 z-50 rounded-full bg-ink px-6 py-3 text-lg font-semibold text-white shadow-lg"
+        >
+          🔊 Klik hier één keer om filmpjes met geluid af te spelen
+        </button>
+      )}
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center">
         {state.phase === "lobby" && (
           <div className="animate-rise-in flex flex-col items-center gap-6 text-center">

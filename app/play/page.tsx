@@ -192,19 +192,18 @@ export default function PlayPage() {
 
   function handlePhotoToggle(index: number) {
     if (!question || question.type !== "photo_pick" || submitting || secondsLeft <= 0) return;
-    setPicked((prev) => {
-      const next = prev.includes(index)
-        ? prev.filter((i) => i !== index)
-        : prev.length >= 2
-          ? prev
-          : [...prev, index];
-      if (next.length === 2 && next !== prev) {
-        const correct = new Set(question.correctIndexes);
-        const isCorrect = next.every((i) => correct.has(i));
-        submitAnswer({ selected_option: null, selected_options: next, isCorrect });
-      }
-      return next;
-    });
+    const next = picked.includes(index)
+      ? picked.filter((i) => i !== index)
+      : picked.length >= 2
+        ? picked
+        : [...picked, index];
+    if (next === picked) return;
+    setPicked(next);
+    if (next.length === 2) {
+      const correct = new Set(question.correctIndexes);
+      const isCorrect = next.every((i) => correct.has(i));
+      submitAnswer({ selected_option: null, selected_options: next, isCorrect });
+    }
   }
 
   if (!checkedPlayer || !state || !player) {

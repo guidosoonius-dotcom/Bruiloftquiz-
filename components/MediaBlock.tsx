@@ -21,6 +21,7 @@ export function MediaBlock({
         src={videoUrl}
         controls
         playsInline
+        autoPlay={size === "large"}
         className={
           size === "large"
             ? "mx-auto aspect-video max-h-[55vh] w-full rounded-3xl bg-black/5 shadow-md"

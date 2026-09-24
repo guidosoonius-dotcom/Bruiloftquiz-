@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useResyncOnVisible } from "./useResync";
 
 export interface QuizConfig {
   id: number;
@@ -17,18 +18,14 @@ export interface QuizConfig {
 export function useQuizConfig() {
   const [config, setConfig] = useState<QuizConfig | null>(null);
 
+  const load = useCallback(async () => {
+    const { data } = await supabase.from("quiz_config").select("*").eq("id", 1).single();
+    if (data) setConfig(data as QuizConfig);
+  }, []);
+
   useEffect(() => {
-    let active = true;
-
-    supabase
-      .from("quiz_config")
-      .select("*")
-      .eq("id", 1)
-      .single()
-      .then(({ data }) => {
-        if (active && data) setConfig(data as QuizConfig);
-      });
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch; setState happens after the await
+    load();
     const channel = supabase
       .channel("quiz_config_changes")
       .on(
@@ -36,13 +33,16 @@ export function useQuizConfig() {
         { event: "UPDATE", schema: "public", table: "quiz_config", filter: "id=eq.1" },
         (payload) => setConfig(payload.new as QuizConfig)
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") load();
+      });
 
     return () => {
-      active = false;
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [load]);
+
+  useResyncOnVisible(load);
 
   return { config };
 }

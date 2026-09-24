@@ -1,28 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { QuizState } from "@/lib/types";
+import { useResyncOnVisible } from "./useResync";
 
 export function useQuizState() {
   const [state, setState] = useState<QuizState | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const load = useCallback(async () => {
+    const { data } = await supabase.from("quiz_state").select("*").eq("id", 1).single();
+    if (data) setState(data as QuizState);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
-    let active = true;
-
-    supabase
-      .from("quiz_state")
-      .select("*")
-      .eq("id", 1)
-      .single()
-      .then(({ data }) => {
-        if (active) {
-          setState(data as QuizState);
-          setLoading(false);
-        }
-      });
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch; setState happens after the await
+    load();
     const channel = supabase
       .channel("quiz_state_changes")
       .on(
@@ -30,13 +25,18 @@ export function useQuizState() {
         { event: "UPDATE", schema: "public", table: "quiz_state", filter: "id=eq.1" },
         (payload) => setState(payload.new as QuizState)
       )
-      .subscribe();
+      // Ook na een herverbinding opnieuw ophalen: tijdens de onderbreking
+      // gemiste wijzigingen worden niet nagestuurd.
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") load();
+      });
 
     return () => {
-      active = false;
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [load]);
+
+  useResyncOnVisible(load);
 
   return { state, loading };
 }
