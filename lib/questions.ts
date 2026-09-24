@@ -169,7 +169,7 @@ export const questions: Question[] = [
   {
     id: 15,
     type: "photo_pick",
-    question: "Op welke twee foto's zijn Erik & Cas te zien?",
+    question: "Welke twee babyfoto's zijn Erik en Cas?",
     tiles: [
       { imageUrl: "/questions/paar-1.jpg" },
       { imageUrl: "/questions/paar-2.jpg" },

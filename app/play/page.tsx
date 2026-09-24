@@ -58,8 +58,10 @@ export default function PlayPage() {
       .select("id")
       .eq("id", stored.id)
       .maybeSingle()
-      .then(({ data }) => {
-        if (!data) {
+      .then(({ data, error }) => {
+        // Alleen uitloggen als de database bevestigt dat de speler niet
+        // bestaat — niet bij een netwerkfout (slechte wifi in de zaal).
+        if (!error && !data) {
           clearStoredPlayer();
           router.replace("/");
           return;
@@ -68,6 +70,39 @@ export default function PlayPage() {
         setCheckedPlayer(true);
       });
   }, [router]);
+
+  // Verwijdert de host alle spelers terwijl deze telefoon openstaat, stuur de
+  // gast dan meteen terug naar het aanmeldscherm in plaats van pas bij het
+  // eerste antwoord.
+  useEffect(() => {
+    if (!player) return;
+    const playerId = player.id;
+    function verifyStillExists() {
+      supabase
+        .from("players")
+        .select("id")
+        .eq("id", playerId)
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (!error && !data) {
+            clearStoredPlayer();
+            router.replace("/");
+          }
+        });
+    }
+    function onVisible() {
+      if (document.visibilityState === "visible") verifyStillExists();
+    }
+    const channel = supabase
+      .channel(`player_exists_${playerId}`)
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "players" }, verifyStillExists)
+      .subscribe();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      supabase.removeChannel(channel);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [player, router]);
 
   const questionIndex = state?.current_question_index ?? 0;
   const question = activeQuestions[questionIndex];

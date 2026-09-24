@@ -92,6 +92,14 @@ export default function ScreenPage() {
           🔊 Klik hier één keer om filmpjes met geluid af te spelen
         </button>
       )}
+      {state.phase !== "lobby" && origin && (
+        <div className="fixed bottom-6 left-6 z-40 flex items-center gap-3 rounded-2xl bg-white/90 p-3 shadow-md ring-1 ring-black/5">
+          <QRCodeSVG value={origin} size={88} />
+          <p className="max-w-28 text-sm leading-snug text-ink-soft">
+            Te laat? Scan en doe alsnog mee!
+          </p>
+        </div>
+      )}
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center">
         {state.phase === "lobby" && (
           <div className="animate-rise-in flex flex-col items-center gap-6 text-center">

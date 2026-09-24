@@ -170,6 +170,21 @@ function HostPanel() {
     setBusy(false);
   }
 
+  async function removeAllPlayers() {
+    if (
+      !confirm(
+        "Alle spelers en hun scores verwijderen? Iedereen moet daarna opnieuw meedoen via de link of QR-code."
+      )
+    )
+      return;
+    setBusy(true);
+    setUpdateError(null);
+    // Antwoorden verdwijnen automatisch mee (ON DELETE CASCADE).
+    const { error } = await supabase.from("players").delete().not("id", "is", null);
+    if (error) setUpdateError(error.message);
+    setBusy(false);
+  }
+
   function moveQuestion(pos: number, direction: -1 | 1) {
     const newPos = pos + direction;
     if (newPos < 0 || newPos >= order.length) return;
@@ -348,6 +363,14 @@ function HostPanel() {
             className="w-full text-center text-xs text-blush-deep underline"
           >
             Alle scores resetten
+          </button>
+
+          <button
+            onClick={removeAllPlayers}
+            disabled={busy}
+            className="w-full text-center text-xs text-blush-deep underline"
+          >
+            Alle spelers verwijderen
           </button>
         </div>
 

@@ -42,6 +42,15 @@ export default function JoinPage() {
       return;
     }
 
+    // Opnieuw meedoen met een andere naam: ruim de vorige speler van deze
+    // telefoon op, anders blijft die als spookinzending met 0 punten op het
+    // scorebord staan. Pas ná de gelukte insert, zodat een mislukte poging
+    // de gast niet zonder speler achterlaat.
+    const previous = getStoredPlayer();
+    if (previous && previous.id !== data.id) {
+      await supabase.from("players").delete().eq("id", previous.id);
+    }
+
     storePlayer(data.id, data.name);
     router.push("/play");
   }
