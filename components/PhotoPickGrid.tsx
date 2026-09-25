@@ -30,7 +30,11 @@ export function PhotoPickGrid({
   const large = size === "large";
 
   return (
-    <div className={large ? "grid grid-cols-3 gap-5" : "grid grid-cols-2 gap-3"}>
+    <div
+      className={
+        large ? "grid h-full grid-cols-3 grid-rows-2 gap-5" : "grid grid-cols-2 gap-3"
+      }
+    >
       {tiles.map((tile, index) => {
         const isSelected = selectedIndexes.includes(index);
         const isCorrect = revealing && correctIndexes!.includes(index);
@@ -49,7 +53,8 @@ export function PhotoPickGrid({
             onClick={() => onToggle(index)}
             style={{ animationDelay: `${index * 60}ms` }}
             className={[
-              "relative aspect-square overflow-hidden rounded-2xl shadow-sm transition-all",
+              "relative overflow-hidden rounded-2xl shadow-sm transition-all",
+              large ? "h-full min-h-0 w-full" : "aspect-square",
               entranceAnimation,
               isSelected && !revealing ? "ring-4 ring-lavender-deep" : "",
               isCorrect ? "ring-4 ring-mint-deep" : "",

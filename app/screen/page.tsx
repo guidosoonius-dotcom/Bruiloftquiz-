@@ -82,8 +82,15 @@ export default function ScreenPage() {
     );
   }
 
+  const contentMaxWidth =
+    state.phase === "lobby"
+      ? "max-w-[92rem]"
+      : state.phase === "question" || state.phase === "reveal"
+        ? "max-w-[80rem]"
+        : "max-w-5xl";
+
   return (
-    <div className="relative flex flex-1 flex-col px-10 py-12">
+    <div className="relative flex h-dvh flex-col overflow-hidden px-10 py-8">
       <FloralAccents />
       {!soundUnlocked && (
         <button
@@ -101,108 +108,161 @@ export default function ScreenPage() {
           </p>
         </div>
       )}
-      <div
-        className={`mx-auto flex w-full flex-1 flex-col justify-center ${
-          state.phase === "lobby" ? "max-w-[92rem]" : "max-w-5xl"
-        }`}
-      >
+      <div className={`mx-auto flex w-full min-h-0 flex-1 flex-col justify-center ${contentMaxWidth}`}>
         {state.phase === "lobby" && <ScreenWelcome origin={origin} players={players} />}
 
         {state.phase === "video_intro" && question?.type === "multiple_choice" && question.videoUrl && (
-          <div key={`video-${questionIndex}`} className="animate-rise-in space-y-6 text-center">
-            <p className="text-lg font-semibold uppercase tracking-wide text-ink-soft">
+          <div
+            key={`video-${questionIndex}`}
+            className="animate-rise-in flex h-full min-h-0 flex-col items-center gap-6 text-center"
+          >
+            <p className="shrink-0 text-lg font-semibold uppercase tracking-wide text-ink-soft">
               Vraag {questionIndex + 1} van {activeQuestions.length}
             </p>
             <video
               src={question.videoUrl}
               controls
               autoPlay
-              className="mx-auto aspect-video max-h-[65vh] w-full rounded-3xl bg-black/5 shadow-md"
+              className="min-h-0 w-full flex-1 rounded-3xl bg-black/5 object-contain shadow-md"
             />
-            <p className="text-2xl text-ink-soft">Kijk mee — de vraag komt zo!</p>
+            <p className="shrink-0 text-2xl text-ink-soft">Kijk mee — de vraag komt zo!</p>
           </div>
         )}
 
         {state.phase === "question" && question && (
-          <div key={`question-${questionIndex}`} className="animate-rise-in space-y-8">
-            <div className="flex items-center justify-between">
-              <TimerRing secondsLeft={secondsLeft} totalSeconds={question.timeLimitSeconds} size={120} />
+          <div key={`question-${questionIndex}`} className="animate-rise-in flex h-full min-h-0 flex-col gap-6">
+            <div className="flex shrink-0 items-center justify-between">
+              <TimerRing secondsLeft={secondsLeft} totalSeconds={question.timeLimitSeconds} size={110} />
               <p className="text-xl font-semibold text-ink-soft">
                 {answeredCount}/{playerCount} geantwoord
               </p>
             </div>
-            <QuestionCard
-              question={question}
-              questionNumber={questionIndex + 1}
-              totalQuestions={activeQuestions.length}
-              size="large"
-            />
             {question.type === "multiple_choice" ? (
-              <AnswerOptionGrid
-                options={question.options}
-                selectedIndex={null}
-                disabled
-                onSelect={() => {}}
-                size="large"
-              />
+              <>
+                <div className="min-h-0 flex-1">
+                  <QuestionCard
+                    question={question}
+                    questionNumber={questionIndex + 1}
+                    totalQuestions={activeQuestions.length}
+                    size="large"
+                    layout="split"
+                  />
+                </div>
+                <div className="mx-auto w-full max-w-3xl shrink-0">
+                  <AnswerOptionGrid
+                    options={question.options}
+                    selectedIndex={null}
+                    disabled
+                    onSelect={() => {}}
+                    size="large"
+                  />
+                </div>
+              </>
             ) : (
-              <PhotoPickGrid tiles={question.tiles} selectedIndexes={[]} disabled onToggle={() => {}} size="large" />
+              <>
+                <div className="shrink-0">
+                  <QuestionCard
+                    question={question}
+                    questionNumber={questionIndex + 1}
+                    totalQuestions={activeQuestions.length}
+                    size="large"
+                  />
+                </div>
+                <div className="mx-auto min-h-0 w-full max-w-4xl flex-1">
+                  <PhotoPickGrid
+                    tiles={question.tiles}
+                    selectedIndexes={[]}
+                    disabled
+                    onToggle={() => {}}
+                    size="large"
+                  />
+                </div>
+              </>
             )}
           </div>
         )}
 
         {state.phase === "reveal" && question && (
-          <div key={`reveal-${questionIndex}`} className="animate-rise-in space-y-8">
-            <QuestionCard
-              question={question}
-              questionNumber={questionIndex + 1}
-              totalQuestions={activeQuestions.length}
-              size="large"
-              revealed
-            />
+          <div key={`reveal-${questionIndex}`} className="animate-rise-in flex h-full min-h-0 flex-col gap-6">
             {question.type === "multiple_choice" ? (
-              <AnswerOptionGrid
-                options={question.options}
-                selectedIndex={null}
-                correctIndex={question.correctIndex}
-                disabled
-                onSelect={() => {}}
-                size="large"
-                voteCounts={voteCounts}
-              />
+              <>
+                <div className="min-h-0 flex-1">
+                  <QuestionCard
+                    question={question}
+                    questionNumber={questionIndex + 1}
+                    totalQuestions={activeQuestions.length}
+                    size="large"
+                    layout="split"
+                    revealed
+                  />
+                </div>
+                <div className="mx-auto w-full max-w-3xl shrink-0">
+                  <AnswerOptionGrid
+                    options={question.options}
+                    selectedIndex={null}
+                    correctIndex={question.correctIndex}
+                    disabled
+                    onSelect={() => {}}
+                    size="large"
+                    voteCounts={voteCounts}
+                  />
+                </div>
+              </>
             ) : (
-              <PhotoPickGrid
-                tiles={question.tiles}
-                selectedIndexes={[]}
-                correctIndexes={question.correctIndexes}
-                disabled
-                onToggle={() => {}}
-                size="large"
-              />
+              <>
+                <div className="shrink-0">
+                  <QuestionCard
+                    question={question}
+                    questionNumber={questionIndex + 1}
+                    totalQuestions={activeQuestions.length}
+                    size="large"
+                    revealed
+                  />
+                </div>
+                <div className="mx-auto min-h-0 w-full max-w-4xl flex-1">
+                  <PhotoPickGrid
+                    tiles={question.tiles}
+                    selectedIndexes={[]}
+                    correctIndexes={question.correctIndexes}
+                    disabled
+                    onToggle={() => {}}
+                    size="large"
+                  />
+                </div>
+              </>
             )}
           </div>
         )}
 
         {state.phase === "leaderboard" && (
-          <div key={`leaderboard-${questionIndex}`} className="animate-rise-in space-y-10">
-            <h2 className="text-center font-signature text-7xl text-ink">Tussenstand</h2>
-            <ScoreboardList leaderboard={leaderboard} size="large" />
+          <div
+            key={`leaderboard-${questionIndex}`}
+            className="animate-rise-in flex h-full min-h-0 flex-col gap-6"
+          >
+            <h2 className="shrink-0 text-center font-signature text-7xl text-ink">Tussenstand</h2>
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              <ScoreboardList leaderboard={leaderboard} size="large" />
+            </div>
           </div>
         )}
 
         {state.phase === "finished" && (
-          <div className="animate-rise-in space-y-10 text-center">
-            <div className="mx-auto h-40 w-40 overflow-hidden rounded-full shadow-lg ring-4 ring-white">
-              <Image
-                src="/couple/couple-3.jpg"
-                alt="Het bruidspaar"
-                width={320}
-                height={320}
-                className="h-full w-full object-cover"
-              />
+          <div className="animate-rise-in flex h-full min-h-0 flex-col items-center gap-6 text-center">
+            <div className="shrink-0 space-y-4">
+              <div className="mx-auto h-32 w-32 overflow-hidden rounded-full shadow-lg ring-4 ring-white">
+                <Image
+                  src="/couple/couple-3.jpg"
+                  alt="Het bruidspaar"
+                  width={320}
+                  height={320}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <h2 className="font-signature text-8xl text-ink">Eindstand!</h2>
             </div>
-            <h2 className="font-signature text-8xl text-ink">Eindstand!</h2>
-            <ScoreboardList leaderboard={leaderboard} size="large" />
+            <div className="min-h-0 w-full flex-1 overflow-y-auto">
+              <ScoreboardList leaderboard={leaderboard} size="large" />
+            </div>
           </div>
         )}
       </div>
