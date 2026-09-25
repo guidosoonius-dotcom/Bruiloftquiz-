@@ -225,6 +225,15 @@ function HostPanel() {
           </p>
         )}
 
+        {state.phase === "lobby" && (
+          <div className="animate-rise-in rounded-3xl bg-mint-deep/10 p-6 text-center shadow-sm ring-1 ring-mint-deep/20">
+            <p className="text-6xl font-bold text-ink">{playerCount}</p>
+            <p className="text-sm font-semibold uppercase tracking-wide text-ink-soft">
+              {playerCount === 1 ? "deelnemer klaar" : "deelnemers klaar"}
+            </p>
+          </div>
+        )}
+
         {question && (
           <div className="space-y-2 rounded-2xl bg-white/70 p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">

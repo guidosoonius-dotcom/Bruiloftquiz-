@@ -121,7 +121,12 @@ export default function ScreenPage() {
               </div>
             )}
             {origin && <p className="text-3xl font-semibold text-ink">{origin}</p>}
-            <p className="text-xl text-ink-soft">{playerCount} deelnemers klaar</p>
+            <div className="rounded-3xl bg-mint-deep/10 px-10 py-5 ring-1 ring-mint-deep/20">
+              <p className="text-7xl font-bold text-ink">{playerCount}</p>
+              <p className="text-xl font-semibold uppercase tracking-wide text-ink-soft">
+                {playerCount === 1 ? "deelnemer klaar" : "deelnemers klaar"}
+              </p>
+            </div>
           </div>
         )}
 
