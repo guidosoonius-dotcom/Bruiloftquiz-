@@ -83,5 +83,5 @@ export function useLeaderboard() {
     }))
     .sort((a, b) => b.score - a.score);
 
-  return { leaderboard, playerCount: players.length, answers };
+  return { leaderboard, players, playerCount: players.length, answers };
 }

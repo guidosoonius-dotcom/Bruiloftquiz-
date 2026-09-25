@@ -13,6 +13,7 @@ import { PhotoPickGrid } from "@/components/PhotoPickGrid";
 import { TimerRing } from "@/components/TimerRing";
 import { ScoreboardList } from "@/components/ScoreboardList";
 import { FloralAccents } from "@/components/FloralAccents";
+import { ScreenWelcome } from "@/components/ScreenWelcome";
 
 /**
  * Beamerscherm voor in de zaal — puur weergave, geen bediening.
@@ -23,7 +24,7 @@ import { FloralAccents } from "@/components/FloralAccents";
 export default function ScreenPage() {
   const { state } = useQuizState();
   const { config } = useQuizConfig();
-  const { leaderboard, playerCount, answers } = useLeaderboard();
+  const { leaderboard, players, playerCount, answers } = useLeaderboard();
   const [origin, setOrigin] = useState("");
   const [secondsLeft, setSecondsLeft] = useState(0);
   // Browsers staan automatisch afspelen mét geluid pas toe na één klik op de
@@ -100,35 +101,12 @@ export default function ScreenPage() {
           </p>
         </div>
       )}
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center">
-        {state.phase === "lobby" && (
-          <div className="animate-rise-in flex flex-col items-center gap-6 text-center">
-            <div className="mx-auto h-56 w-56 overflow-hidden rounded-full shadow-lg ring-4 ring-white">
-              <Image
-                src="/couple/couple-welcome.jpg"
-                alt="Het bruidspaar"
-                width={480}
-                height={480}
-                className="h-full w-full object-cover"
-                priority
-              />
-            </div>
-            <h1 className="font-signature text-8xl text-ink">De Bruiloftquiz</h1>
-            <p className="text-2xl text-ink-soft">Doe mee vanaf je telefoon!</p>
-            {origin && (
-              <div className="rounded-3xl bg-white p-4 shadow-lg ring-4 ring-white">
-                <QRCodeSVG value={origin} size={220} />
-              </div>
-            )}
-            {origin && <p className="text-3xl font-semibold text-ink">{origin}</p>}
-            <div className="rounded-3xl bg-mint-deep/10 px-10 py-5 ring-1 ring-mint-deep/20">
-              <p className="text-7xl font-bold text-ink">{playerCount}</p>
-              <p className="text-xl font-semibold uppercase tracking-wide text-ink-soft">
-                {playerCount === 1 ? "deelnemer klaar" : "deelnemers klaar"}
-              </p>
-            </div>
-          </div>
-        )}
+      <div
+        className={`mx-auto flex w-full flex-1 flex-col justify-center ${
+          state.phase === "lobby" ? "max-w-[92rem]" : "max-w-5xl"
+        }`}
+      >
+        {state.phase === "lobby" && <ScreenWelcome origin={origin} players={players} />}
 
         {state.phase === "video_intro" && question?.type === "multiple_choice" && question.videoUrl && (
           <div key={`video-${questionIndex}`} className="animate-rise-in space-y-6 text-center">

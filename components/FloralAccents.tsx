@@ -1,12 +1,36 @@
+/**
+ * Ademende achtergrond in de huisstijlkleuren (mint, blush, lavendel), gebruikt
+ * op alle schermen: telefoon, beamer en quizmaster. Maten in vmax zodat het op
+ * een smal telefoonscherm én op een breed beamerbeeld dezelfde sfeer geeft.
+ * Negatieve delays laten elke vlek al "halverwege een ademhaling" beginnen,
+ * zodat er bij het laden niets tegelijk begint te bewegen.
+ */
 export function FloralAccents() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-mint blur-3xl opacity-60" />
-      <div className="absolute -top-16 -right-20 h-64 w-64 rounded-full bg-blush blur-3xl opacity-60" />
-      <div className="absolute -bottom-28 -left-16 h-80 w-80 rounded-full bg-lavender blur-3xl opacity-50" />
-      <div className="absolute -bottom-20 -right-24 h-72 w-72 rounded-full bg-mint blur-3xl opacity-40" />
+      <div
+        className="breath-blob breath-blob--mint breathe-a -top-[22vmax] -left-[18vmax] h-[62vmax] w-[62vmax]"
+        style={{ animationDuration: "19s", animationDelay: "-3s" }}
+      />
+      <div
+        className="breath-blob breath-blob--blush breathe-b -top-[18vmax] -right-[20vmax] h-[56vmax] w-[56vmax]"
+        style={{ animationDuration: "23s", animationDelay: "-11s" }}
+      />
+      <div
+        className="breath-blob breath-blob--lavender breathe-c -bottom-[24vmax] -left-[14vmax] h-[64vmax] w-[64vmax]"
+        style={{ animationDuration: "27s", animationDelay: "-7s" }}
+      />
+      <div
+        className="breath-blob breath-blob--mint breathe-b -bottom-[20vmax] -right-[18vmax] h-[54vmax] w-[54vmax]"
+        style={{ animationDuration: "21s", animationDelay: "-15s" }}
+      />
+      <div
+        className="breath-blob breath-blob--blush breathe-c top-[30%] left-[35%] h-[38vmax] w-[38vmax]"
+        style={{ animationDuration: "31s", animationDelay: "-20s" }}
+      />
+      <div className="breath-glow" />
       <svg
-        className="absolute top-6 right-6 h-16 w-16 text-lavender-deep opacity-70"
+        className="animate-leaf-sway absolute top-6 right-6 h-16 w-16 text-lavender-deep opacity-70"
         viewBox="0 0 64 64"
         fill="none"
       >

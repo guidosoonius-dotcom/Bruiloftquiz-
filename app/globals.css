@@ -168,6 +168,145 @@ h3,
   animation: grow-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/*
+ * Ademende achtergrond: grote, zachte kleurvlekken in de huisstijlkleuren die
+ * heel langzaam uitzetten, verschuiven en weer inkrimpen. Radial-gradients i.p.v.
+ * een blur-filter en alleen transform/opacity animeren houdt het vloeiend op
+ * telefoons en beamer-laptops. Elke vlek heeft een eigen tempo, zodat het
+ * geheel nooit in een herkenbare lus valt.
+ */
+.breath-blob {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform, opacity;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.breath-blob--mint {
+  background: radial-gradient(circle at center, var(--mint) 0%, transparent 68%);
+}
+
+.breath-blob--blush {
+  background: radial-gradient(circle at center, var(--blush) 0%, transparent 68%);
+}
+
+.breath-blob--lavender {
+  background: radial-gradient(circle at center, var(--lavender) 0%, transparent 68%);
+}
+
+.breath-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 55% 45% at 50% 45%,
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  will-change: opacity, transform;
+  animation: breathe-glow 9s ease-in-out infinite;
+}
+
+@keyframes breathe-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(6%, 8%, 0) scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes breathe-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(-8%, 5%, 0) scale(0.92);
+    opacity: 0.6;
+  }
+}
+
+@keyframes breathe-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translate3d(7%, -6%, 0) scale(1.15);
+    opacity: 0.95;
+  }
+}
+
+@keyframes breathe-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes leaf-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes live-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.breathe-a {
+  animation-name: breathe-a;
+}
+
+.breathe-b {
+  animation-name: breathe-b;
+}
+
+.breathe-c {
+  animation-name: breathe-c;
+}
+
+.animate-leaf-sway {
+  transform-origin: 50% 90%;
+  animation: leaf-sway 7s ease-in-out infinite;
+}
+
+.animate-live-ping {
+  animation: live-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breath-blob,
+  .breath-glow,
+  .animate-leaf-sway,
+  .animate-live-ping {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-kenburns,
   .animate-fade-up,
