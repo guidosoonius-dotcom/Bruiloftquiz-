@@ -315,21 +315,13 @@ function HostPanel() {
 
           {(state.phase === "reveal" || state.phase === "leaderboard") && (
             <>
-              {!isLastQuestion ? (
+              {!isLastQuestion && (
                 <button
                   onClick={nextQuestion}
                   disabled={busy}
                   className="w-full rounded-full bg-mint-deep px-6 py-4 text-lg font-semibold text-white shadow-sm active:scale-[0.98]"
                 >
                   ➡ Volgende vraag
-                </button>
-              ) : (
-                <button
-                  onClick={showFinished}
-                  disabled={busy}
-                  className="w-full rounded-full bg-blush-deep px-6 py-4 text-lg font-semibold text-white shadow-sm active:scale-[0.98]"
-                >
-                  🏁 Toon eindstand
                 </button>
               )}
               {state.phase === "reveal" && (
@@ -341,6 +333,20 @@ function HostPanel() {
                   🏆 Toon tussenstand
                 </button>
               )}
+              {/* Ook los van de laatste vraag beschikbaar: de quizmaster kan de
+                  eindstand altijd al eerder tonen, bijvoorbeeld voor een
+                  tussentijdse blik op wie er voorstaat. */}
+              <button
+                onClick={showFinished}
+                disabled={busy}
+                className={
+                  isLastQuestion
+                    ? "w-full rounded-full bg-blush-deep px-6 py-4 text-lg font-semibold text-white shadow-sm active:scale-[0.98]"
+                    : "w-full rounded-full bg-white/80 px-6 py-3 font-semibold text-ink shadow-sm ring-1 ring-black/5 active:scale-[0.98]"
+                }
+              >
+                🏁 Toon eindstand
+              </button>
             </>
           )}
 
